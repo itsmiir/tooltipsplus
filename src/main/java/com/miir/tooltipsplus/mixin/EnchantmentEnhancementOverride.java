@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 @Mixin(Enchantment.class)
 public class EnchantmentEnhancementOverride {
 
+//    i know this is bad code, fuck you ~em
     @Overwrite
     public Text getName(int level) {
         MutableText mutableText = new TranslatableText(((Enchantment) ((Object) this)).getTranslationKey());
