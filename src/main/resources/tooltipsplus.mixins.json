@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.miir.tooltipsplus.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  ],
+  "client": [
+    "EnchantmentEnhancementOverride",
+    "NameDisplayOverride",
+    "RenderNBTMixin",
+    "ShulkerRenderOverride",
+    "WrittenBookMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
