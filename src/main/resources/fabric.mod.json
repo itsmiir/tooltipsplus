@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "id": "modid",
-  "version": "${version}",
+  "id": "tooltipsplus",
+  "version": "1.0.0",
 
-  "name": "Example Mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "Tooltips+",
+  "description": "tooltips, but better",
   "authors": [
-    "Me!"
+    "miir"
   ],
   "contact": {
     "homepage": "https://fabricmc.net/",
@@ -14,23 +14,22 @@
   },
 
   "license": "CC0-1.0",
-  "icon": "assets/modid/icon.png",
+  "icon": "assets/tooltipsplus/icon.png",
 
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
     "main": [
-      "net.fabricmc.example.ExampleMod"
+      "com.miir.TooltipsPlus"
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    "tooltipsplus.mixins.json"
   ],
 
   "depends": {
     "fabricloader": ">=0.11.3",
-    "fabric": "*",
-    "minecraft": "1.17.x",
-    "java": ">=16"
+    "minecraft": "1.16.5",
+    "java": ">=1.8"
   },
   "suggests": {
     "another-mod": "*"
