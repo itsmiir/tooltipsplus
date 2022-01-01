@@ -1,4 +1,4 @@
 # tooltips+
 
-this is my mod (it makes tooltips marginally better)
-you run it on your client
+this is my fabric mod (it makes tooltips marginally better)
+you run it on your minecraft client
