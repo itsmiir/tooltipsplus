@@ -17,9 +17,12 @@ import org.spongepowered.asm.mixin.Overwrite;
 @Mixin(ItemStack.class)
 public abstract class NameDisplayOverride {
 
+    /**
+     * @author miir
+     */
     @Overwrite
     public Text getName() {
-        NbtCompound nbtCompound = ((ItemStack) (Object) this).getSubTag("display");
+        NbtCompound nbtCompound = ((ItemStack) (Object) this).getSubNbt("display");
         if (nbtCompound != null && nbtCompound.contains("Name", 8)) {
             try {
                 MutableText text = Text.Serializer.fromJson(nbtCompound.getString("Name"));

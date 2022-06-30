@@ -8,16 +8,16 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.BlockView;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
@@ -26,13 +26,13 @@ import java.util.List;
 public class ShulkerRenderOverride {
 
     @Environment(EnvType.CLIENT)
-    @Overwrite
-    public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
+    @Inject(method = "appendTooltip", at = @At("HEAD"), cancellable = true)
+    public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options, CallbackInfo ci) {
         if (!MinecraftClient.getInstance().options.advancedItemTooltips) {
-            NbtCompound nbtCompound = stack.getSubTag("BlockEntityTag");
+            NbtCompound nbtCompound = stack.getSubNbt("BlockEntityTag");
             if (nbtCompound != null) {
                 if (nbtCompound.contains("LootTable", 8)) {
-                    tooltip.add(new LiteralText("???????"));
+                    tooltip.add(Text.literal("???????"));
                 }
 
                 if (nbtCompound.contains("Items", 9)) {
@@ -46,7 +46,7 @@ public class ShulkerRenderOverride {
                             ++j;
                             if (i <= 4) {
                                 ++i;
-                                MutableText mutableText = itemStack.getName().shallowCopy();
+                                MutableText mutableText = itemStack.getName().copy();
                                 MutableText count = (MutableText) Text.of(" x" + itemStack.getCount());
                                 count.formatted(Formatting.GRAY);
                                 mutableText.append(count);
@@ -56,11 +56,12 @@ public class ShulkerRenderOverride {
                     }
 
                     if (j - i > 0) {
-                        tooltip.add((new TranslatableText("container.shulkerBox.more", j - i)).formatted(Formatting.ITALIC));
+                        tooltip.add((Text.translatable("container.shulkerBox.more", j - i)).formatted(Formatting.ITALIC));
                     }
                 }
             }
-
+        } else {
+            ci.cancel();
         }
     }
 }

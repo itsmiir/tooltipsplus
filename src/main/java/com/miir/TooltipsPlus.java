@@ -1,14 +1,11 @@
 package com.miir;
 
-import com.sun.imageio.plugins.png.PNGImageReader;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.MapColor;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ingame.EnchantmentScreen;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.PngFile;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.inventory.Inventories;
@@ -19,21 +16,16 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtil;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.text.TextColor;
+import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Rarity;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.registry.Registry;
 
-import java.awt.*;
 import java.util.List;
-import java.util.Map;
 
 public class TooltipsPlus implements ModInitializer {
-//    unsure how i feel about this colors system. felt cute, might refactor later ~em
+//    unsure how i feel about this colors system. felt cute, might refactor later ~m
     public static final Object2ObjectArrayMap<Enchantment, MapColor> ENCH_COLORS = new Object2ObjectArrayMap<>(
             new Enchantment[] {
                     Enchantments.MENDING, Enchantments.VANISHING_CURSE, Enchantments.LURE, Enchantments.LUCK_OF_THE_SEA,
@@ -45,20 +37,20 @@ public class TooltipsPlus implements ModInitializer {
                     Enchantments.FIRE_ASPECT, Enchantments.LOOTING, Enchantments.SWEEPING, Enchantments.POWER,
                     Enchantments.PUNCH, Enchantments.FLAME, Enchantments.INFINITY, Enchantments.LOYALTY,
                     Enchantments.IMPALING, Enchantments.RIPTIDE, Enchantments.CHANNELING, Enchantments.MULTISHOT,
-                    Enchantments.QUICK_CHARGE, Enchantments.PIERCING
+                    Enchantments.QUICK_CHARGE, Enchantments.PIERCING, Enchantments.SWIFT_SNEAK
 
             },
             new MapColor[] {
                     MapColor.GOLD, MapColor.GRAY, MapColor.MAGENTA, MapColor.LIME,
                     MapColor.TERRACOTTA_YELLOW, MapColor.IRON_GRAY, MapColor.WHITE, MapColor.DIAMOND_BLUE,
                     MapColor.STONE_GRAY, MapColor.GREEN, MapColor.PALE_PURPLE, MapColor.LAPIS_BLUE,
-                    MapColor.PALE_YELLOW, MapColor.WHITE, MapColor.TERRACOTTA_ORANGE, MapColor.field_25707,
-                    MapColor.field_25706, MapColor.CYAN, MapColor.TERRACOTTA_GRAY, MapColor.BROWN,
-                    MapColor.BRIGHT_RED, MapColor.DARK_RED, MapColor.RED, MapColor.field_25703,
+                    MapColor.PALE_YELLOW, MapColor.WHITE, MapColor.TERRACOTTA_ORANGE, MapColor.ORANGE,
+                    MapColor.TERRACOTTA_BLUE, MapColor.CYAN, MapColor.TERRACOTTA_GRAY, MapColor.BROWN,
+                    MapColor.BRIGHT_RED, MapColor.DARK_RED, MapColor.RED, MapColor.TERRACOTTA_BLACK,
                     MapColor.ORANGE, MapColor.OAK_TAN, MapColor.WHITE_GRAY, MapColor.BRIGHT_RED,
-                    MapColor.field_25703, MapColor.ORANGE, MapColor.BLACK, MapColor.OAK_TAN,
+                    MapColor.DULL_RED, MapColor.ORANGE, MapColor.BLACK, MapColor.OAK_TAN,
                     MapColor.BRIGHT_RED, MapColor.PALE_PURPLE, MapColor.YELLOW, MapColor.LAPIS_BLUE,
-                    MapColor.DIAMOND_BLUE, MapColor.BRIGHT_RED
+                    MapColor.DIAMOND_BLUE, MapColor.BRIGHT_RED, MapColor.BROWN
             }
     );
 
@@ -146,7 +138,7 @@ public class TooltipsPlus implements ModInitializer {
     }
 
     public static void addBeehiveTooltip(ItemStack stack, List<Text> tooltip) {
-        MutableText text = (MutableText) Text.of("Contains " + ((NbtList) ((NbtCompound) stack.getTag().get("BlockEntityTag")).get("Bees")).size() + " bees");
+        MutableText text = (MutableText) Text.of("Contains " + ((NbtList) ((NbtCompound) stack.getNbt().get("BlockEntityTag")).get("Bees")).size() + " bees");
         text.formatted(Formatting.GRAY);
         tooltip.add(text);
     }
@@ -316,7 +308,7 @@ public class TooltipsPlus implements ModInitializer {
 //                        wooooo recursion babey
                         break;
                     default:
-                        String str = "- " + element.toString();
+                        String str = "- " + element;
                         MutableText text = (MutableText) Text.of(str);
                         text.formatted(Formatting.GRAY);
                         tooltip.add(text);
@@ -337,7 +329,9 @@ public class TooltipsPlus implements ModInitializer {
                     default:
                         String str = key + ": " + ((NbtCompound) tag).get(key).toString();
                         if (!key.equals("Damage")) {
-                            tooltip.add(Text.of(str));
+                            MutableText text = MutableText.of(TextContent.EMPTY);
+                            text.append(str).formatted(Formatting.GRAY);
+                            tooltip.add(text);
                         }
                         break;
                 }
@@ -421,7 +415,7 @@ public class TooltipsPlus implements ModInitializer {
                 j++;
                 if (i <= k) {
                     ++i;
-                    MutableText mutableText = potStack.getName().shallowCopy();
+                    MutableText mutableText = potStack.getName().copy();
                     mutableText.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(getColor(potStack))));
                     if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 346)) {
                         countFormatting = Formatting.DARK_GRAY;
@@ -446,7 +440,7 @@ public class TooltipsPlus implements ModInitializer {
                 j++;
                 if (i <= k) {
                     ++i;
-                    MutableText mutableText = potStack.getName().shallowCopy();
+                    MutableText mutableText = potStack.getName().copy();
                     mutableText.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(getColor(potStack))));
                     if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 346)) {
                         countFormatting = Formatting.DARK_GRAY;
@@ -471,7 +465,7 @@ public class TooltipsPlus implements ModInitializer {
                 j++;
                 if (i <= k) {
                     ++i;
-                    MutableText mutableText = potStack.getName().shallowCopy();
+                    MutableText mutableText = potStack.getName().copy();
                     mutableText.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(getColor(potStack))));
                     if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 346)) {
                         countFormatting = Formatting.DARK_GRAY;
@@ -496,7 +490,7 @@ public class TooltipsPlus implements ModInitializer {
                 if (i <= k) {
                     ++i;
                     MusicDiscItem disc = MusicDiscItem.bySound(music);
-                    MutableText mutableText = disc.getDescription().shallowCopy();
+                    MutableText mutableText = disc.getDescription().copy();
                     mutableText.formatted(disc.getRarity(disc.getDefaultStack()).formatting);
                     if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 346)) {
                         countFormatting = Formatting.DARK_GRAY;
@@ -519,7 +513,7 @@ public class TooltipsPlus implements ModInitializer {
                 ++j;
                 if (i <= k || InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 342)) {
                     ++i;
-                    MutableText mutableText = item.getDefaultStack().getName().shallowCopy();
+                    MutableText mutableText = item.getDefaultStack().getName().copy();
                     if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 346)) {
                         countFormatting = Formatting.DARK_GRAY;
                         String id = Registry.ITEM.getId(item).toString();

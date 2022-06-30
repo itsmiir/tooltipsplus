@@ -27,18 +27,18 @@ public class RenderNBTMixin {
             method = "appendTooltip"
     )
     private void mixin(ItemStack stack, World world, List<Text> tooltip, TooltipContext context, CallbackInfo ci) {
-        if ((!stack.getItem().equals(Items.ENCHANTED_BOOK) && stack.hasTag() || stack.getItem().equals(Items.CLOCK)) && MinecraftClient.getInstance().options.advancedItemTooltips) {
+        if ((!stack.getItem().equals(Items.ENCHANTED_BOOK) && stack.hasNbt() || stack.getItem().equals(Items.CLOCK)) && MinecraftClient.getInstance().options.advancedItemTooltips) {
             if (stack.getItem().equals(Items.BEE_NEST) || stack.getItem().equals(Items.BEEHIVE)) {
                 TooltipsPlus.addBeehiveTooltip(stack, tooltip);
             }
             else if (stack.getItem().equals(Items.CLOCK)) {
                     TooltipsPlus.getClockTime(tooltip);
             }
-            else if (stack.getItem() instanceof BlockItem && stack.getTag().contains("BlockEntityTag")) {
-                NbtCompound tag = stack.getSubTag("BlockEntityTag");
+            else if (stack.getItem() instanceof BlockItem && stack.getNbt().contains("BlockEntityTag")) {
+                NbtCompound tag = stack.getSubNbt("BlockEntityTag");
                 if (tag != null) {
                     if (tag.contains("LootTable", 8)) {
-                        tooltip.add(new LiteralText("???????"));
+                        tooltip.add(Text.literal("???????"));
                     }
 
                     if (tag.contains("Items", 9)) {
@@ -48,14 +48,14 @@ public class RenderNBTMixin {
             }
             else if (stack.getItem().equals(Items.WRITABLE_BOOK) || stack.getItem().equals(Items.WRITTEN_BOOK)) {
                     try {
-                        MutableText text = (MutableText) Text.of("Book of " + ((NbtList) stack.getTag().get("pages")).size() + " pages");
+                        MutableText text = (MutableText) Text.of("Book of " + ((NbtList) stack.getNbt().get("pages")).size() + " pages");
                         text.formatted(Formatting.GRAY);
                         tooltip.add(text);
                     } catch (NullPointerException ignored) {
                     }
                 }
-            else if ((!(stack.getItem() instanceof BlockItem) || !((BlockItem) stack.getItem()).getBlock().isIn(BlockTags.SHULKER_BOXES)) && !stack.getItem().equals(Items.PLAYER_HEAD)) {
-                    NbtCompound tag = stack.getTag();
+            else if ((!(stack.getItem() instanceof BlockItem) || !((BlockItem) stack.getItem()).getBlock().getDefaultState().isIn(BlockTags.SHULKER_BOXES)) && !stack.getItem().equals(Items.PLAYER_HEAD)) {
+                    NbtCompound tag = stack.getNbt();
                     TooltipsPlus.addTooltip(tooltip, tag);
                 }
             }

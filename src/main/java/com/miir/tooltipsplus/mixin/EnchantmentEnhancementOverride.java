@@ -13,10 +13,13 @@ import org.spongepowered.asm.mixin.Overwrite;
 @Mixin(Enchantment.class)
 public class EnchantmentEnhancementOverride {
 
-//    i know this is bad code, fuck you ~em
-    @Overwrite
+//    i know this is bad, fuck you ~m
+/**
+ * @author miir
+ */
+@Overwrite
     public Text getName(int level) {
-        MutableText mutableText = new TranslatableText(((Enchantment) ((Object) this)).getTranslationKey());
+        MutableText mutableText = Text.translatable(((Enchantment) ((Object) this)).getTranslationKey());
         mutableText.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(getEnchantmentColor(((Enchantment)(Object)this)))));
 
         if (level != 1 || ((Enchantment) ((Object) this)).getMaxLevel() != 1) {
