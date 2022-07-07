@@ -7,9 +7,9 @@
   ],
   "client": [
     "EnchantmentEnhancementOverride",
-    "NameDisplayOverride",
+    "NameDisplayMixin",
     "RenderNBTMixin",
-    "ShulkerRenderOverride",
+    "ShulkerRenderMixin",
     "WrittenBookMixin"
   ],
   "injectors": {

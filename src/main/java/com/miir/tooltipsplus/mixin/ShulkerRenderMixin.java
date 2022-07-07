@@ -23,7 +23,7 @@ import java.util.List;
 
 @Environment(EnvType.CLIENT)
 @Mixin(ShulkerBoxBlock.class)
-public class ShulkerRenderOverride {
+public class ShulkerRenderMixin {
 
     @Environment(EnvType.CLIENT)
     @Inject(method = "appendTooltip", at = @At("HEAD"), cancellable = true)

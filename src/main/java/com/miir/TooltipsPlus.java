@@ -1,10 +1,12 @@
 package com.miir;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.MapColor;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
@@ -15,62 +17,60 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtil;
+import net.minecraft.resource.Resource;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.registry.Registry;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
-public class TooltipsPlus implements ModInitializer {
-//    unsure how i feel about this colors system. felt cute, might refactor later ~m
-    public static final Object2ObjectArrayMap<Enchantment, MapColor> ENCH_COLORS = new Object2ObjectArrayMap<>(
-            new Enchantment[] {
-                    Enchantments.MENDING, Enchantments.VANISHING_CURSE, Enchantments.LURE, Enchantments.LUCK_OF_THE_SEA,
-                    Enchantments.FORTUNE, Enchantments.UNBREAKING, Enchantments.SILK_TOUCH, Enchantments.EFFICIENCY,
-                    Enchantments.PROTECTION, Enchantments.THORNS, Enchantments.AQUA_AFFINITY, Enchantments.RESPIRATION,
-                    Enchantments.PROJECTILE_PROTECTION, Enchantments.FEATHER_FALLING, Enchantments.BLAST_PROTECTION, Enchantments.FIRE_PROTECTION,
-                    Enchantments.DEPTH_STRIDER, Enchantments.FROST_WALKER, Enchantments.BINDING_CURSE, Enchantments.SOUL_SPEED,
-                    Enchantments.SHARPNESS, Enchantments.SMITE, Enchantments.BANE_OF_ARTHROPODS, Enchantments.KNOCKBACK,
-                    Enchantments.FIRE_ASPECT, Enchantments.LOOTING, Enchantments.SWEEPING, Enchantments.POWER,
-                    Enchantments.PUNCH, Enchantments.FLAME, Enchantments.INFINITY, Enchantments.LOYALTY,
-                    Enchantments.IMPALING, Enchantments.RIPTIDE, Enchantments.CHANNELING, Enchantments.MULTISHOT,
-                    Enchantments.QUICK_CHARGE, Enchantments.PIERCING, Enchantments.SWIFT_SNEAK
-
-            },
-            new MapColor[] {
-                    MapColor.GOLD, MapColor.GRAY, MapColor.MAGENTA, MapColor.LIME,
-                    MapColor.TERRACOTTA_YELLOW, MapColor.IRON_GRAY, MapColor.WHITE, MapColor.DIAMOND_BLUE,
-                    MapColor.STONE_GRAY, MapColor.GREEN, MapColor.PALE_PURPLE, MapColor.LAPIS_BLUE,
-                    MapColor.PALE_YELLOW, MapColor.WHITE, MapColor.TERRACOTTA_ORANGE, MapColor.ORANGE,
-                    MapColor.TERRACOTTA_BLUE, MapColor.CYAN, MapColor.TERRACOTTA_GRAY, MapColor.BROWN,
-                    MapColor.BRIGHT_RED, MapColor.DARK_RED, MapColor.RED, MapColor.TERRACOTTA_BLACK,
-                    MapColor.ORANGE, MapColor.OAK_TAN, MapColor.WHITE_GRAY, MapColor.BRIGHT_RED,
-                    MapColor.DULL_RED, MapColor.ORANGE, MapColor.BLACK, MapColor.OAK_TAN,
-                    MapColor.BRIGHT_RED, MapColor.PALE_PURPLE, MapColor.YELLOW, MapColor.LAPIS_BLUE,
-                    MapColor.DIAMOND_BLUE, MapColor.BRIGHT_RED, MapColor.BROWN
-            }
-    );
+@Environment(EnvType.CLIENT)
+public class TooltipsPlus {
+    // TODO: 07/04/22 fix creative search
+//    unsure how i feel about this colors system. felt cute, might refactor later
+    public static final MapColor[] COLORS = new MapColor[] {
+            MapColor.GOLD,                      MapColor.GRAY,                MapColor.MAGENTA,                MapColor.LIME,
+            MapColor.TERRACOTTA_YELLOW,         MapColor.IRON_GRAY,           MapColor.WHITE,                  MapColor.DIAMOND_BLUE,
+            MapColor.STONE_GRAY,                MapColor.GREEN,               MapColor.PALE_PURPLE,            MapColor.LAPIS_BLUE,
+            MapColor.PALE_YELLOW,               MapColor.WHITE,               MapColor.TERRACOTTA_ORANGE,      MapColor.ORANGE,
+            MapColor.TERRACOTTA_BLUE,           MapColor.CYAN,                MapColor.TERRACOTTA_GRAY,        MapColor.BROWN,
+            MapColor.BRIGHT_RED,                MapColor.DARK_RED,            MapColor.RED,                    MapColor.TERRACOTTA_BLACK,
+            MapColor.ORANGE,                    MapColor.OAK_TAN,             MapColor.WHITE_GRAY,             MapColor.BRIGHT_RED,
+            MapColor.DULL_RED,                  MapColor.ORANGE,              MapColor.BLACK,                  MapColor.OAK_TAN,
+            MapColor.BRIGHT_RED,                MapColor.PALE_PURPLE,         MapColor.YELLOW,                 MapColor.LAPIS_BLUE,
+            MapColor.DIAMOND_BLUE,              MapColor.BRIGHT_RED,          MapColor.BROWN
+    };
+    private static final Enchantment[] ENCHANTMENTS = new Enchantment[] {
+            Enchantments.MENDING,               Enchantments.VANISHING_CURSE, Enchantments.LURE,               Enchantments.LUCK_OF_THE_SEA,
+            Enchantments.FORTUNE,               Enchantments.UNBREAKING,      Enchantments.SILK_TOUCH,         Enchantments.EFFICIENCY,
+            Enchantments.PROTECTION,            Enchantments.THORNS,          Enchantments.AQUA_AFFINITY,      Enchantments.RESPIRATION,
+            Enchantments.PROJECTILE_PROTECTION, Enchantments.FEATHER_FALLING, Enchantments.BLAST_PROTECTION,   Enchantments.FIRE_PROTECTION,
+            Enchantments.DEPTH_STRIDER,         Enchantments.FROST_WALKER,    Enchantments.BINDING_CURSE,      Enchantments.SOUL_SPEED,
+            Enchantments.SHARPNESS,             Enchantments.SMITE,           Enchantments.BANE_OF_ARTHROPODS, Enchantments.KNOCKBACK,
+            Enchantments.FIRE_ASPECT,           Enchantments.LOOTING,         Enchantments.SWEEPING,           Enchantments.POWER,
+            Enchantments.PUNCH,                 Enchantments.FLAME,           Enchantments.INFINITY,           Enchantments.LOYALTY,
+            Enchantments.IMPALING,              Enchantments.RIPTIDE,         Enchantments.CHANNELING,         Enchantments.MULTISHOT,
+            Enchantments.QUICK_CHARGE,          Enchantments.PIERCING,        Enchantments.SWIFT_SNEAK
+    };
+    public static final Object2ObjectArrayMap<Enchantment, MapColor> ENCH_COLORS = new Object2ObjectArrayMap<>(ENCHANTMENTS, COLORS);
+    private static final Object2ObjectArrayMap<Identifier, Integer> COLOR_CACHE = new Object2ObjectArrayMap<>();
 
     public static int getColor(ItemStack stack) {
+        Item item = stack.getItem();
         int color = 0;
-        if (stack.getRarity() != Rarity.COMMON) {
-            return stack.getRarity().formatting.getColorValue();
-        }
-        if (stack.getItem() instanceof PotionItem || stack.getItem() instanceof TippedArrowItem) {
-            return getPotionColor(stack);
-        }
-        if (stack.getItem() instanceof BlockItem && !(stack.getItem() instanceof BannerItem)) {
-            color = getMapColor(stack).color;
-        }
-        if (color == 0) {
-            color = inferColorFromID(stack, color);
-        }
-        if (color == 0) {
-            return Rarity.COMMON.formatting.getColorValue();
-        }
+        if (stack.getRarity() != Rarity.COMMON) return stack.getRarity().formatting.getColorValue();
+        if (item instanceof SpawnEggItem || item instanceof DyeableArmorItem) return ((DyeableItem) item).getColor(stack);
+        if (item instanceof PotionItem || item instanceof TippedArrowItem) return getPotionColor(stack);
+        if (item instanceof BlockItem && !(item instanceof BannerItem)) color = getMapColor(stack).color;
+        if (color == 0) color = inferColor(stack);
+        if (color == 0) color = getTextureColor(stack);
+        if (color == 0) return Rarity.COMMON.formatting.getColorValue();
         return color;
     }
 
@@ -79,11 +79,13 @@ public class TooltipsPlus implements ModInitializer {
         return PotionUtil.getColor(stack);
     }
 
-    private static int inferColorFromID(ItemStack stack, int original) {
+    private static int inferColor(ItemStack stack) {
+//        this is a bit suspicious and pretty bad for compat tbh
+//        also wtf is regex
         String name = Registry.ITEM.getId(stack.getItem()).toString();
-        if (name.contains("white_")) return MapColor.WHITE.color;
+        if      (name.contains("black_") || name.contains(":gray_")) return MapColor.GRAY.color;
         else if (name.contains("light_gray_")) return MapColor.LIGHT_GRAY.color;
-        else if (name.contains("gray_") || name.contains("black_")) return MapColor.GRAY.color;
+        else if (name.contains("white_")) return MapColor.WHITE.color;
         else if (name.contains("pink_")) return MapColor.PINK.color;
         else if (name.contains(":red_")) return MapColor.RED.color;
         else if (name.contains("orange")) return MapColor.ORANGE.color;
@@ -94,53 +96,104 @@ public class TooltipsPlus implements ModInitializer {
         else if (name.contains("light_blue")) return MapColor.LIGHT_BLUE.color;
         else if (name.contains(":blue")) return MapColor.BLUE.color;
         else if (name.contains("purple")) return MapColor.PURPLE.color;
-        else if (name.contains("brown_")) return MapColor.BROWN.color;
         else if (name.contains("magenta")) return MapColor.MAGENTA.color;
-        else if (name.contains("netherite")) return MapColor.GRAY.color;
-        else if (name.contains("diamond")) return Blocks.DIAMOND_BLOCK.getDefaultMapColor().color;
-        else if (name.contains("iron")) return Blocks.IRON_BLOCK.getDefaultMapColor().color;
-        else if (name.contains("gold_") || name.contains("golden_")) return Blocks.GOLD_BLOCK.getDefaultMapColor().color;
+        else if (name.contains(":brown")) return MapColor.BROWN.color;
         else if (name.contains("emerald")) return Blocks.EMERALD_BLOCK.getDefaultMapColor().color;
-        else if (name.contains("leather")) return MapColor.BROWN.color;
         else if (name.contains("redstone")) return Blocks.REDSTONE_BLOCK.getDefaultMapColor().color;
-        else if (name.contains("glowstone")) return Blocks.GLOWSTONE.getDefaultMapColor().color;
-        else if (name.contains("stone")) return Blocks.COBBLESTONE.getDefaultMapColor().color;
-        else if (name.contains("wood")) return Blocks.OAK_PLANKS.getDefaultMapColor().color;
-        else if (name.contains("prismarine")) return Blocks.PRISMARINE.getDefaultMapColor().color;
-        else return original;
+        else if (name.contains(":oak")) return Blocks.OAK_PLANKS.getDefaultMapColor().color;
+        else if (name.contains("birch")) return Blocks.BIRCH_PLANKS.getDefaultMapColor().color;
+        else if (name.contains("dark_oak")) return Blocks.DARK_OAK_PLANKS.getDefaultMapColor().color;
+        else if (name.contains("jungle")) return Blocks.JUNGLE_PLANKS.getDefaultMapColor().color;
+        else if (name.contains("acacia")) return Blocks.ACACIA_PLANKS.getDefaultMapColor().color;
+        else if (name.contains("mangrove")) return Blocks.MANGROVE_PLANKS.getDefaultMapColor().color;
+        else if (name.contains("spruce")) return Blocks.SPRUCE_PLANKS.getDefaultMapColor().color;
+        else if (name.contains(":warped_")) return Blocks.WARPED_PLANKS.getDefaultMapColor().color;
+        else if (name.contains(":crimson_")) return Blocks.CRIMSON_PLANKS.getDefaultMapColor().color;
+        else return 0;
+    }
+
+    private static int getTextureColor(ItemStack stack) {
+//        this feels like a very heavy function but it's Good for Compat™
+        if (MinecraftClient.getInstance().world != null) {
+            Identifier stackId = Registry.ITEM.getId(stack.getItem());
+//            that's right, we're caching babe
+            if (COLOR_CACHE.get(stackId) == null) {
+                Identifier texID = new Identifier(stackId.getNamespace(), "textures/item/"+stackId.getPath()+".png");
+                Optional<Resource> optionalResource = MinecraftClient.getInstance().getResourceManager().getResource(texID);
+                if (optionalResource.isEmpty()) {
+                    texID = new Identifier(stackId.getNamespace(), "textures/block/"+stackId.getPath()+".png");
+                    optionalResource = MinecraftClient.getInstance().getResourceManager().getResource(texID);
+                }
+                if (optionalResource.isPresent()) {
+                    Resource textureResource = optionalResource.get();
+                    NativeImage img;
+                    try {
+                        img = NativeImage.read(textureResource.getInputStream());
+                    } catch (IOException e) {
+                        COLOR_CACHE.put(stackId, 0);
+                        return 0;
+                    }
+                    int h = img.getHeight();
+                    int w = img.getWidth();
+                    int r = 0;
+                    int g = 0;
+                    int b = 0;
+                    int n = 0;
+                    for (int x = 0; x < w; x++) {
+                        for (int y = 0; y < h; y++) {
+                            int c = img.getColor(x, y);
+                            if (c >> 24 == 0) continue;
+
+                            r += c & 0xFF;
+                            g += (c & 0xFF00) >> 8;
+                            b += (c & 0xFF0000) >> 16;
+                            n++;
+                        }
+                    }
+                    int color = Math.round(b / ((float) n)) | (Math.round(g / ((float) n)) << 8) | (Math.round(r / ((float) n)) << 16);
+                    if (((color >> 16) & 0xFF) + ((color >> 8) & 0xFF) + (color & 0xFF) < 44+44+44) color = 0x444444;
+                    COLOR_CACHE.put(stackId, color);
+                    return color;
+                } else {
+                    return 0;
+                }
+            } else {
+                return COLOR_CACHE.get(stackId);
+            }
+        }
+        return 0;
     }
 
     private static MapColor getMapColor(ItemStack stack) {
         MapColor color = ((BlockItem) stack.getItem()).getBlock().getDefaultMapColor();
-        if (color.equals(MapColor.CLEAR)) {
-            return MapColor.CLEAR;
-        } else if (color.equals(MapColor.BLACK)) {
+        if (color.equals(MapColor.BLACK)) { // black is hard to see
             return MapColor.GRAY;
         }
         return color;
     }
 
-    public static void getClockTime(List<Text> tooltip) {
-        try {
-            long rawTime = MinecraftClient.getInstance().world.getTimeOfDay();
-            int time = (int) (rawTime + 6000 > 23999 ? rawTime - 18000 : rawTime + 6000);
-            int hr = time / 1000;
-            float min = ((time % 1000) / 1000f) * 60;
+    public static Text getClockTime() {
+            if (MinecraftClient.getInstance().world != null) {
+                long rawTime = MinecraftClient.getInstance().world.getTimeOfDay();
+                int time = (int) (rawTime + 6000 > 23999 ? rawTime - 18000 : rawTime + 6000);
+//                this is the one time that integer division has been helpful
+                int hr = time / 1000;
+                float min = ((time % 1000) / 1000f) * 60;
 
-            String paddingHr = hr < 10 ? "0" : "";
-            String paddingMin = min < 10 ? "0" : "";
-//                    i am proud to say that the above is one of the most confusing pieces of code i've written ~em
-            MutableText text = (MutableText) Text.of(paddingHr + hr + ":" + paddingMin + (Math.round(min)));
-            text.formatted(Formatting.GOLD);
-            tooltip.add(text);
-        } catch (NullPointerException ignored) {
-        }
+                String paddingHr = hr < 10 ? "0" : "";
+                String paddingMin = min < 10 ? "0" : "";
+//                    mmm syntactic sugar
+                MutableText text = (MutableText) Text.of(paddingHr + hr + ":" + paddingMin + (Math.round(min)));
+                text.formatted(Formatting.GOLD);
+                return text;
+            }
+            return Text.empty();
     }
 
-    public static void addBeehiveTooltip(ItemStack stack, List<Text> tooltip) {
+    public static Text addBeehiveTooltip(ItemStack stack) {
         MutableText text = (MutableText) Text.of("Contains " + ((NbtList) ((NbtCompound) stack.getNbt().get("BlockEntityTag")).get("Bees")).size() + " bees");
         text.formatted(Formatting.GRAY);
-        tooltip.add(text);
+        return text;
     }
 
     public static String romanNumeral(int num) {
@@ -172,102 +225,45 @@ public class TooltipsPlus implements ModInitializer {
                     switch (i) {
                         case 1:
                             switch (digitchars[i - 1]) {
-                                case '1':
-                                    numerals.append("I");
-                                    break;
-                                case '2':
-                                    numerals.append("II");
-                                    break;
-                                case '3':
-                                    numerals.append("III");
-                                    break;
-                                case '4':
-                                    numerals.append("IV");
-                                    break;
-                                case '5':
-                                    numerals.append("V");
-                                    break;
-                                case '6':
-                                    numerals.append("VI");
-                                    break;
-                                case '7':
-                                    numerals.append("VII");
-                                    break;
-                                case '8':
-                                    numerals.append("VIII");
-                                    break;
-                                case '9':
-                                    numerals.append("IX");
-                                    break;
-                                case '0':
-                                default:
-                                    break;
+                                case '1' -> numerals.append("I");
+                                case '2' -> numerals.append("II");
+                                case '3' -> numerals.append("III");
+                                case '4' -> numerals.append("IV");
+                                case '5' -> numerals.append("V");
+                                case '6' -> numerals.append("VI");
+                                case '7' -> numerals.append("VII");
+                                case '8' -> numerals.append("VIII");
+                                case '9' -> numerals.append("IX");
+                                default -> {
+                                }
                             }
                         case 2:
                             switch (digitchars[i - 1]) {
-                                case '1':
-                                    numerals.append("X");
-                                    break;
-                                case '2':
-                                    numerals.append("XX");
-                                    break;
-                                case '3':
-                                    numerals.append("XXX");
-                                    break;
-                                case '4':
-                                    numerals.append("XL");
-                                    break;
-                                case '5':
-                                    numerals.append("L");
-                                    break;
-                                case '6':
-                                    numerals.append("LX");
-                                    break;
-                                case '7':
-                                    numerals.append("LXX");
-                                    break;
-                                case '8':
-                                    numerals.append("LXXX");
-                                    break;
-                                case '9':
-                                    numerals.append("XC");
-                                    break;
-                                case '0':
-                                default:
-                                    break;
+                                case '1' -> numerals.append("X");
+                                case '2' -> numerals.append("XX");
+                                case '3' -> numerals.append("XXX");
+                                case '4' -> numerals.append("XL");
+                                case '5' -> numerals.append("L");
+                                case '6' -> numerals.append("LX");
+                                case '7' -> numerals.append("LXX");
+                                case '8' -> numerals.append("LXXX");
+                                case '9' -> numerals.append("XC");
+                                default -> {
+                                }
                             }
                         case 3:
                             switch (digitchars[i - 1]) {
-                                case '1':
-                                    numerals.append("C");
-                                    break;
-                                case '2':
-                                    numerals.append("CC");
-                                    break;
-                                case '3':
-                                    numerals.append("CCC");
-                                    break;
-                                case '4':
-                                    numerals.append("CD");
-                                    break;
-                                case '5':
-                                    numerals.append("D");
-                                    break;
-                                case '6':
-                                    numerals.append("DC");
-                                    break;
-                                case '7':
-                                    numerals.append("DCC");
-                                    break;
-                                case '8':
-                                    numerals.append("DCCC");
-                                    break;
-                                case '9':
-                                    numerals.append("CM");
-                                    break;
-                                case '0':
-                                default:
-                                    break;
+                                case '1' -> numerals.append("C");
+                                case '2' -> numerals.append("CC");
+                                case '3' -> numerals.append("CCC");
+                                case '4' -> numerals.append("CD");
+                                case '5' -> numerals.append("D");
+                                case '6' -> numerals.append("DC");
+                                case '7' -> numerals.append("DCC");
+                                case '8' -> numerals.append("DCCC");
+                                case '9' -> numerals.append("CM");
+                                default -> {
+                                }
                             }
                         case 4:
                             switch (digitchars[i - 1]) {
@@ -302,17 +298,14 @@ public class TooltipsPlus implements ModInitializer {
             for (NbtElement element :
                     (NbtList) tag) {
                 switch (element.getType()) {
-                    case 10:
-                    case 9:
-                        addTooltip(tooltip, element);
-//                        wooooo recursion babey
-                        break;
-                    default:
+                    case 10, 9 -> addTooltip(tooltip, element);
+//                        wooooo recursion
+                    default -> {
                         String str = "- " + element;
                         MutableText text = (MutableText) Text.of(str);
                         text.formatted(Formatting.GRAY);
                         tooltip.add(text);
-                        break;
+                    }
                 }
             }
         } else {
@@ -538,11 +531,4 @@ public class TooltipsPlus implements ModInitializer {
         }
     }
 
-    public static void getColorFromTexture() {
-
-    }
-
-    @Override
-    public void onInitialize() {
-    }
 }

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "tooltipsplus",
-  "version": "1.0.0",
+  "version": "${version}",
 
   "name": "Tooltips+",
   "description": "tooltips, but better",
@@ -18,8 +18,7 @@
 
   "environment": "client",
   "entrypoints": {
-    "main": [
-      "com.miir.TooltipsPlus"
+    "client": [
     ]
   },
   "mixins": [
