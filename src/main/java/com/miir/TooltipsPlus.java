@@ -6,6 +6,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.MapColor;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.enchantment.Enchantment;
@@ -42,7 +43,7 @@ public class TooltipsPlus {
             MapColor.TERRACOTTA_BLUE,           MapColor.CYAN,                MapColor.TERRACOTTA_GRAY,        MapColor.BROWN,
             MapColor.BRIGHT_RED,                MapColor.DARK_RED,            MapColor.RED,                    MapColor.TERRACOTTA_BLACK,
             MapColor.ORANGE,                    MapColor.OAK_TAN,             MapColor.WHITE_GRAY,             MapColor.BRIGHT_RED,
-            MapColor.DULL_RED,                  MapColor.ORANGE,              MapColor.BLACK,                  MapColor.OAK_TAN,
+            MapColor.DULL_RED,                  MapColor.ORANGE,              MapColor.LIME,                   MapColor.OAK_TAN,
             MapColor.BRIGHT_RED,                MapColor.PALE_PURPLE,         MapColor.YELLOW,                 MapColor.LAPIS_BLUE,
             MapColor.DIAMOND_BLUE,              MapColor.BRIGHT_RED,          MapColor.BROWN
     };
@@ -65,7 +66,8 @@ public class TooltipsPlus {
         Item item = stack.getItem();
         int color = 0;
         if (stack.getRarity() != Rarity.COMMON) return stack.getRarity().formatting.getColorValue();
-        if (item instanceof SpawnEggItem || item instanceof DyeableArmorItem) return ((DyeableItem) item).getColor(stack);
+        if (item instanceof DyeableArmorItem) return ((DyeableItem) item).getColor(stack);
+        if (item instanceof SpawnEggItem) return ((SpawnEggItem) item).getColor(0);
         if (item instanceof PotionItem || item instanceof TippedArrowItem) return getPotionColor(stack);
         if (item instanceof BlockItem && !(item instanceof BannerItem)) color = getMapColor(stack).color;
         if (color == 0) color = inferColor(stack);
@@ -408,7 +410,7 @@ public class TooltipsPlus {
                 j++;
                 if (i <= k) {
                     ++i;
-                    MutableText mutableText = potStack.getName().copy();
+                    MutableText mutableText = potStack.getTooltip(null, TooltipContext.Default.NORMAL).get(0).copy();
                     mutableText.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(getColor(potStack))));
                     if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 346)) {
                         countFormatting = Formatting.DARK_GRAY;
@@ -506,7 +508,7 @@ public class TooltipsPlus {
                 ++j;
                 if (i <= k || InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 342)) {
                     ++i;
-                    MutableText mutableText = item.getDefaultStack().getName().copy();
+                    MutableText mutableText = item.getDefaultStack().getTooltip(null, TooltipContext.Default.NORMAL).get(0).copy();
                     if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 346)) {
                         countFormatting = Formatting.DARK_GRAY;
                         String id = Registry.ITEM.getId(item).toString();

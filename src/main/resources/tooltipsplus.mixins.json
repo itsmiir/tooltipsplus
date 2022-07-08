@@ -4,6 +4,8 @@
   "package": "com.miir.tooltipsplus.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "FixSearchingMixin",
+    "HeldItemColorMixin"
   ],
   "client": [
     "EnchantmentEnhancementOverride",
