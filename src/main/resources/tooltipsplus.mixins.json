@@ -11,7 +11,7 @@
     "EnchantmentEnhancementOverride",
     "NameDisplayMixin",
     "RenderNBTMixin",
-    "ShulkerRenderMixin",
+    "SuppressShulkerTooltipMixin",
     "WrittenBookMixin"
   ],
   "injectors": {

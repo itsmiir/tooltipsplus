@@ -24,10 +24,8 @@ public class WrittenBookMixin extends Item {
     }
 
     @Environment(EnvType.CLIENT)
-    @Inject(
-            method = "appendTooltip",
-            at = @At("HEAD")
-    )
+    @Inject(method = "appendTooltip",
+            at = @At("HEAD"))
     public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context, CallbackInfo ci) {
         super.appendTooltip(stack, world, tooltip, context);
     }

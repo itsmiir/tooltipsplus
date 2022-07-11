@@ -16,7 +16,6 @@ import java.util.Random;
 @Environment(EnvType.CLIENT)
 @Mixin(Enchantment.class)
 public class EnchantmentEnhancementOverride {
-
 //    i know this is bad, fuck you
 /**
  * @author miir
@@ -25,7 +24,6 @@ public class EnchantmentEnhancementOverride {
     public Text getName(int level) {
         MutableText mutableText = Text.translatable(((Enchantment) ((Object) this)).getTranslationKey());
         mutableText.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(getEnchantmentColor(((Enchantment)(Object)this)))));
-
         if (level != 1 || ((Enchantment) ((Object) this)).getMaxLevel() != 1) {
             MutableText levelNumeral = (MutableText) Text.of(TooltipsPlus.romanNumeral(level));
             switch (level) {

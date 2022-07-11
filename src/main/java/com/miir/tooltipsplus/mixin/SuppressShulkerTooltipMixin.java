@@ -31,18 +31,11 @@ import java.util.List;
 
 @Environment(EnvType.CLIENT)
 @Mixin(ShulkerBoxBlock.class)
-public class ShulkerRenderMixin extends Block {
-
-    protected ShulkerRenderMixin(Settings settings) {
-        super(settings);
-    }
-
+public class SuppressShulkerTooltipMixin {
     /**
      * @author miir
      */
     @Environment(EnvType.CLIENT)
-    @Overwrite()
-    public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
-
-    }
+    @Overwrite
+    public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options){}
 }

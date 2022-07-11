@@ -33,10 +33,9 @@ import java.util.Optional;
 
 @Environment(EnvType.CLIENT)
 public class TooltipsPlus {
-    // TODO: 07/04/22 fix creative search
 //    unsure how i feel about this colors system. felt cute, might refactor later
     public static final MapColor[] COLORS = new MapColor[] {
-            MapColor.GOLD,                      MapColor.GRAY,                MapColor.MAGENTA,                MapColor.LIME,
+            MapColor.GOLD,                      MapColor.RED,                 MapColor.MAGENTA,                MapColor.LIME,
             MapColor.TERRACOTTA_YELLOW,         MapColor.IRON_GRAY,           MapColor.WHITE,                  MapColor.DIAMOND_BLUE,
             MapColor.STONE_GRAY,                MapColor.GREEN,               MapColor.PALE_PURPLE,            MapColor.LAPIS_BLUE,
             MapColor.PALE_YELLOW,               MapColor.WHITE,               MapColor.TERRACOTTA_ORANGE,      MapColor.ORANGE,
@@ -179,11 +178,13 @@ public class TooltipsPlus {
                 long rawTime = MinecraftClient.getInstance().world.getTimeOfDay();
                 int time = (int) (rawTime + 6000 > 23999 ? rawTime - 18000 : rawTime + 6000);
 //                this is the one time that integer division has been helpful
-                int hr = time / 1000;
+                int hr = (time / 1000) % 24;
                 float min = ((time % 1000) / 1000f) * 60;
 
                 String paddingHr = hr < 10 ? "0" : "";
                 String paddingMin = min < 10 ? "0" : "";
+                if (hr < 0) hr += 23;
+                if (min < 0) min += 60;
 //                    mmm syntactic sugar
                 MutableText text = (MutableText) Text.of(paddingHr + hr + ":" + paddingMin + (Math.round(min)));
                 text.formatted(Formatting.GOLD);
