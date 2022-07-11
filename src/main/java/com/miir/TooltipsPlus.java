@@ -201,98 +201,47 @@ public class TooltipsPlus {
 
     public static String romanNumeral(int num) {
         switch (num) {
-            case 0: return "Nulla";
-//            roman numerals don't have 0 but apparently they used that
-            case 1: return "I";
-            case 2: return "II";
-            case 3: return "III";
-            case 4: return "IV";
-            case 5: return "V";
-            case 6: return "VI";
-            case 7: return "VII";
-            case 8: return "VIII";
-            case 9: return "IX";
-            case 10: return "X";
-            case 50: return "L";
-            case 100: return "C";
-            case 500: return "D";
-            case 1000: return "M";
+            case 0:
+                return "Nulla";
+//            roman numerals don't have 0, but apparently they used that
+            case 1:
+                return "I";
+            case 2:
+                return "II";
+            case 3:
+                return "III";
+            case 4:
+                return "IV";
+            case 5:
+                return "V";
+            case 6:
+                return "VI";
+            case 7:
+                return "VII";
+            case 8:
+                return "VIII";
+            case 9:
+                return "IX";
+            case 10:
+                return "X";
+            case 50:
+                return "L";
+            case 100:
+                return "C";
+            case 500:
+                return "D";
+            case 1000:
+                return "M";
             default:
-                String digits = String.valueOf(num);
                 if (num > 3999) {
-                    return digits;
+                    return ((Integer) num).toString();
                 }
-                StringBuilder numerals = new StringBuilder();
-                char[] digitchars = digits.toCharArray();
-                for (int i = digitchars.length; i > 0; i--) {
-                    switch (i) {
-                        case 1:
-                            switch (digitchars[i - 1]) {
-                                case '1' -> numerals.append("I");
-                                case '2' -> numerals.append("II");
-                                case '3' -> numerals.append("III");
-                                case '4' -> numerals.append("IV");
-                                case '5' -> numerals.append("V");
-                                case '6' -> numerals.append("VI");
-                                case '7' -> numerals.append("VII");
-                                case '8' -> numerals.append("VIII");
-                                case '9' -> numerals.append("IX");
-                                default -> {
-                                }
-                            }
-                        case 2:
-                            switch (digitchars[i - 1]) {
-                                case '1' -> numerals.append("X");
-                                case '2' -> numerals.append("XX");
-                                case '3' -> numerals.append("XXX");
-                                case '4' -> numerals.append("XL");
-                                case '5' -> numerals.append("L");
-                                case '6' -> numerals.append("LX");
-                                case '7' -> numerals.append("LXX");
-                                case '8' -> numerals.append("LXXX");
-                                case '9' -> numerals.append("XC");
-                                default -> {
-                                }
-                            }
-                        case 3:
-                            switch (digitchars[i - 1]) {
-                                case '1' -> numerals.append("C");
-                                case '2' -> numerals.append("CC");
-                                case '3' -> numerals.append("CCC");
-                                case '4' -> numerals.append("CD");
-                                case '5' -> numerals.append("D");
-                                case '6' -> numerals.append("DC");
-                                case '7' -> numerals.append("DCC");
-                                case '8' -> numerals.append("DCCC");
-                                case '9' -> numerals.append("CM");
-                                default -> {
-                                }
-                            }
-                        case 4:
-                            switch (digitchars[i - 1]) {
-                                case '1':
-                                    numerals.append("M");
-                                    break;
-                                case '2':
-                                    numerals.append("MM");
-                                    break;
-                                case '3':
-                                    numerals.append("MMM");
-                                    break;
-                                case '4':
-                                case '5':
-                                case '6':
-                                case '7':
-                                case '8':
-                                case '9':
-                                case '0':
-                                default:
-                                    return digits;
-                            }
-                        default:
-                    }
-                }
-                return numerals.toString();
+                return (
+                          THOUS[num / 1000]
+                        + HUNDS[num / 100 % 10]
+                        + TENS[num / 10 % 10]
+                        + ONES[num % 10]
+                        );
         }
     }
 
@@ -533,5 +482,18 @@ public class TooltipsPlus {
             tooltip.add(((MutableText) Text.of("LAlt to show " + (j - i) + " more...")).formatted(Formatting.ITALIC).formatted(Formatting.GRAY));
         }
     }
+
+    private static final String[] THOUS = new String[] {
+            "", "M", "MM", "MMM"
+    };
+    private static final String[] HUNDS = new String[] {
+            "", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"
+    };
+    private static final String[] TENS = new String[] {
+            "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"
+    };
+    private static final String[] ONES = new String[] {
+            "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"
+    };
 
 }
