@@ -30,6 +30,10 @@
 		{
 			"name": "remapJar",
 			"shell_cmd": "gradlew remapJar"
+		},
+		{
+			"name": "Clean",
+			"shell_cmd": "gradlew clean"
 		}
 	]
 }
