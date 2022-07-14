@@ -9,31 +9,45 @@
 	[
 		{
 			"name": "Minecraft Client",
-			"shell_cmd": "gradlew runClient"
+			"shell_cmd": "gradlew runClient",
+			"working_dir": "$project_path"
 		},
 		{
 			"name": "Minecraft Server",
-			"shell_cmd": "gradlew runServer"
+			"shell_cmd": "gradlew runServer",
+			"working_dir": "$project_path"
 		},
 		{
 			"name": "Build",
-			"shell_cmd": "gradlew build"
+			"shell_cmd": "gradlew build",
+			"working_dir": "$project_path"
+
 		},
 		{
 			"name": "Refresh Gradle",
-			"shell_cmd": "gradlew"
+			"shell_cmd": "gradlew",
+			"working_dir": "$project_path"
+			
 		},
 		{
 			"name": "genSources",
-			"shell_cmd": "gradlew genSources"
+			"shell_cmd": "gradlew genSources",
+			"working_dir": "$project_path"
 		},
 		{
 			"name": "remapJar",
-			"shell_cmd": "gradlew remapJar"
+			"shell_cmd": "gradlew remapJar",
+			"working_dir": "$project_path"
 		},
 		{
 			"name": "Clean",
-			"shell_cmd": "gradlew clean"
+			"shell_cmd": "gradlew clean",
+			"working_dir": "$project_path"
+		},
+		{
+			"name": "Initialize Gradle",
+			"shell_cmd": "gradlew.bat",
+			"working_dir": "$project_path"
 		}
 	]
 }

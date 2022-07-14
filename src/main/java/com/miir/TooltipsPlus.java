@@ -21,6 +21,9 @@ import net.minecraft.potion.PotionUtil;
 import net.minecraft.resource.Resource;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.*;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
@@ -44,7 +47,7 @@ public class TooltipsPlus {
             MapColor.ORANGE,                    MapColor.OAK_TAN,             MapColor.WHITE_GRAY,             MapColor.BRIGHT_RED,
             MapColor.DULL_RED,                  MapColor.ORANGE,              MapColor.LIME,                   MapColor.OAK_TAN,
             MapColor.BRIGHT_RED,                MapColor.PALE_PURPLE,         MapColor.YELLOW,                 MapColor.LAPIS_BLUE,
-            MapColor.DIAMOND_BLUE,              MapColor.BRIGHT_RED,          MapColor.BROWN
+            MapColor.DIAMOND_BLUE,              MapColor.BRIGHT_RED
     };
     private static final Enchantment[] ENCHANTMENTS = new Enchantment[] {
             Enchantments.MENDING,               Enchantments.VANISHING_CURSE, Enchantments.LURE,               Enchantments.LUCK_OF_THE_SEA,
@@ -56,7 +59,7 @@ public class TooltipsPlus {
             Enchantments.FIRE_ASPECT,           Enchantments.LOOTING,         Enchantments.SWEEPING,           Enchantments.POWER,
             Enchantments.PUNCH,                 Enchantments.FLAME,           Enchantments.INFINITY,           Enchantments.LOYALTY,
             Enchantments.IMPALING,              Enchantments.RIPTIDE,         Enchantments.CHANNELING,         Enchantments.MULTISHOT,
-            Enchantments.QUICK_CHARGE,          Enchantments.PIERCING,        Enchantments.SWIFT_SNEAK
+            Enchantments.QUICK_CHARGE,          Enchantments.PIERCING
     };
     public static final Object2ObjectArrayMap<Enchantment, MapColor> ENCH_COLORS = new Object2ObjectArrayMap<>(ENCHANTMENTS, COLORS);
     private static final Object2ObjectArrayMap<Identifier, Integer> COLOR_CACHE = new Object2ObjectArrayMap<>();
@@ -106,7 +109,6 @@ public class TooltipsPlus {
         else if (name.contains("dark_oak")) return Blocks.DARK_OAK_PLANKS.getDefaultMapColor().color;
         else if (name.contains("jungle")) return Blocks.JUNGLE_PLANKS.getDefaultMapColor().color;
         else if (name.contains("acacia")) return Blocks.ACACIA_PLANKS.getDefaultMapColor().color;
-        else if (name.contains("mangrove")) return Blocks.MANGROVE_PLANKS.getDefaultMapColor().color;
         else if (name.contains("spruce")) return Blocks.SPRUCE_PLANKS.getDefaultMapColor().color;
         else if (name.contains(":warped_")) return Blocks.WARPED_PLANKS.getDefaultMapColor().color;
         else if (name.contains(":crimson_")) return Blocks.CRIMSON_PLANKS.getDefaultMapColor().color;
@@ -115,49 +117,50 @@ public class TooltipsPlus {
 
     private static int getTextureColor(ItemStack stack) {
 //        this feels like a very heavy function but it's Good for Compat™
+        Resource resource;
         if (MinecraftClient.getInstance().world != null) {
             Identifier stackId = Registry.ITEM.getId(stack.getItem());
 //            that's right, we're caching babe
             if (COLOR_CACHE.get(stackId) == null) {
                 Identifier texID = new Identifier(stackId.getNamespace(), "textures/item/"+stackId.getPath()+".png");
-                Optional<Resource> optionalResource = MinecraftClient.getInstance().getResourceManager().getResource(texID);
-                if (optionalResource.isEmpty()) {
-                    texID = new Identifier(stackId.getNamespace(), "textures/block/"+stackId.getPath()+".png");
-                    optionalResource = MinecraftClient.getInstance().getResourceManager().getResource(texID);
-                }
-                if (optionalResource.isPresent()) {
-                    Resource textureResource = optionalResource.get();
-                    NativeImage img;
+                try {
+                resource = MinecraftClient.getInstance().getResourceManager().getResource(texID);
+                } catch(Exception e) {
                     try {
-                        img = NativeImage.read(textureResource.getInputStream());
-                    } catch (IOException e) {
-                        COLOR_CACHE.put(stackId, 0);
+                        texID = new Identifier(stackId.getNamespace(), "textures/block/"+stackId.getPath()+".png");
+                        resource = MinecraftClient.getInstance().getResourceManager().getResource(texID);
+                    } catch (Exception e1) {
                         return 0;
                     }
-                    int h = img.getHeight();
-                    int w = img.getWidth();
-                    int r = 0;
-                    int g = 0;
-                    int b = 0;
-                    int n = 0;
-                    for (int x = 0; x < w; x++) {
-                        for (int y = 0; y < h; y++) {
-                            int c = img.getColor(x, y);
-                            if (c >> 24 == 0) continue;
-
-                            r += c & 0xFF;
-                            g += (c & 0xFF00) >> 8;
-                            b += (c & 0xFF0000) >> 16;
-                            n++;
-                        }
-                    }
-                    int color = Math.round(b / ((float) n)) | (Math.round(g / ((float) n)) << 8) | (Math.round(r / ((float) n)) << 16);
-                    if (((color >> 16) & 0xFF) + ((color >> 8) & 0xFF) + (color & 0xFF) < 44+44+44) color = 0x444444;
-                    COLOR_CACHE.put(stackId, color);
-                    return color;
-                } else {
+                }
+                Resource textureResource = resource;
+                NativeImage img;
+                try {
+                    img = NativeImage.read(textureResource.getInputStream());
+                } catch (IOException e) {
+                    COLOR_CACHE.put(stackId, 0);
                     return 0;
                 }
+                int h = img.getHeight();
+                int w = img.getWidth();
+                int r = 0;
+                int g = 0;
+                int b = 0;
+                int n = 0;
+                for (int x = 0; x < w; x++) {
+                    for (int y = 0; y < h; y++) {
+                        int c = img.getColor(x, y);
+                        if (c >> 24 == 0) continue;
+                        r += c & 0xFF;
+                        g += (c & 0xFF00) >> 8;
+                        b += (c & 0xFF0000) >> 16;
+                        n++;
+                    }
+                }
+                int color = Math.round(b / ((float) n)) | (Math.round(g / ((float) n)) << 8) | (Math.round(r / ((float) n)) << 16);
+                if (((color >> 16) & 0xFF) + ((color >> 8) & 0xFF) + (color & 0xFF) < 44+44+44) color = 0x444444;
+                COLOR_CACHE.put(stackId, color);
+                return color;
             } else {
                 return COLOR_CACHE.get(stackId);
             }
@@ -190,7 +193,7 @@ public class TooltipsPlus {
                 text.formatted(Formatting.GOLD);
                 return text;
             }
-            return Text.empty();
+            return Text.of("");
     }
 
     public static Text addBeehiveTooltip(ItemStack stack) {
@@ -274,7 +277,7 @@ public class TooltipsPlus {
                     default:
                         String str = key + ": " + ((NbtCompound) tag).get(key).toString();
                         if (!key.equals("Damage")) {
-                            MutableText text = MutableText.of(TextContent.EMPTY);
+                            MutableText text = (MutableText)Text.EMPTY;
                             text.append(str).formatted(Formatting.GRAY);
                             tooltip.add(text);
                         }
@@ -458,7 +461,7 @@ public class TooltipsPlus {
                 ++j;
                 if (i <= k || InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 342)) {
                     ++i;
-                    MutableText mutableText = item.getDefaultStack().getTooltip(null, TooltipContext.Default.NORMAL).get(0).copy();
+                    MutableText mutableText = (MutableText) item.getDefaultStack().getTooltip(null, TooltipContext.Default.NORMAL).get(0).copy();
                     if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 346)) {
                         countFormatting = Formatting.DARK_GRAY;
                         String id = Registry.ITEM.getId(item).toString();
