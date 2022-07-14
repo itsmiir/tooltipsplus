@@ -4,5 +4,32 @@
 		{
 			"path": "."
 		}
+	],
+	"build_systems":
+	[
+		{
+			"name": "Minecraft Client",
+			"shell_cmd": "gradlew runClient"
+		},
+		{
+			"name": "Minecraft Server",
+			"shell_cmd": "gradlew runServer"
+		},
+		{
+			"name": "Build",
+			"shell_cmd": "gradlew build"
+		},
+		{
+			"name": "Refresh Gradle",
+			"shell_cmd": "gradlew"
+		},
+		{
+			"name": "genSources",
+			"shell_cmd": "gradlew genSources"
+		},
+		{
+			"name": "remapJar",
+			"shell_cmd": "gradlew remapJar"
+		}
 	]
 }

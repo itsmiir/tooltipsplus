@@ -8,20 +8,17 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Objects;
 import java.util.Random;
 
 @Environment(EnvType.CLIENT)
 @Mixin(Enchantment.class)
-public class EnchantmentEnhancementOverride {
-//    i know this is bad, fuck you
-/**
- * @author miir
- */
-@Overwrite
-    public Text getName(int level) {
+public class EnchantmentEnhancementMixin {
+@Inject(at = @At("HEAD"), method = "getName", cancellable = true)
+    public void mixin(int level, CallbackInfoReturnable<Text> cir) {
         MutableText mutableText = Text.translatable(((Enchantment) ((Object) this)).getTranslationKey());
         mutableText.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(getEnchantmentColor(((Enchantment)(Object)this)))));
         if (level != 1 || ((Enchantment) ((Object) this)).getMaxLevel() != 1) {
@@ -36,8 +33,7 @@ public class EnchantmentEnhancementOverride {
             }
             mutableText.append(" ").append(levelNumeral);
         }
-
-        return mutableText;
+    cir.setReturnValue(mutableText);
     }
     private int getEnchantmentColor(Enchantment enchantment) {
         MapColor color = TooltipsPlus.ENCH_COLORS.get(enchantment);

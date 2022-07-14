@@ -8,7 +8,7 @@
     "HeldItemColorMixin"
   ],
   "client": [
-    "EnchantmentEnhancementOverride",
+    "EnchantmentEnhancementMixin",
     "NameDisplayMixin",
     "RenderNBTMixin",
     "SuppressShulkerTooltipMixin",

@@ -16,6 +16,10 @@ classes/
 *.ipr
 *.iws
 
+# sublime
+
+*.sublime-workspace
+
 # vscode
 
 .settings/

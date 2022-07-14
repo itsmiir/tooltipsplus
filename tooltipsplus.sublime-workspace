@@ -28,9 +28,25 @@
 	"buffers":
 	[
 	],
-	"build_system": "",
+	"build_system": "Minecraft Client",
 	"build_system_choices":
 	[
+		[
+			[
+				[
+					"Minecraft Client",
+					""
+				],
+				[
+					"Packages/User/java-single-file.sublime-build",
+					""
+				]
+			],
+			[
+				"Minecraft Client",
+				""
+			]
+		]
 	],
 	"build_varint": "",
 	"command_palette":
@@ -39,6 +55,22 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"py",
+				"Set Syntax: Python"
+			],
+			[
+				"fold",
+				"Code Folding: Fold"
+			],
+			[
+				"package",
+				"Package Control: Install Package"
+			],
+			[
+				"packa",
+				"Package Control: Add Channel"
+			],
 			[
 				"pyth",
 				"Set Syntax: Python"
@@ -94,8 +126,22 @@
 		"side_bar_visible": false,
 		"status_bar_visible": false
 	},
+	"expanded_folders":
+	[
+		"/C/projects/mods/Minecraft/tooltipsplus",
+		"/C/projects/mods/Minecraft/tooltipsplus/src",
+		"/C/projects/mods/Minecraft/tooltipsplus/src/main",
+		"/C/projects/mods/Minecraft/tooltipsplus/src/main/java",
+		"/C/projects/mods/Minecraft/tooltipsplus/src/main/java/com",
+		"/C/projects/mods/Minecraft/tooltipsplus/src/main/java/com/miir",
+		"/C/projects/mods/Minecraft/tooltipsplus/src/main/java/com/miir/tooltipsplus",
+		"/C/projects/mods/Minecraft/tooltipsplus/src/main/java/com/miir/tooltipsplus/mixin"
+	],
 	"file_history":
 	[
+		"/C/projects/mods/Minecraft/tooltipsplus/src/main/java/com/miir/TooltipsPlus.java",
+		"/C/projects/mods/Minecraft/tooltipsplus/tooltipsplus.sublime-project",
+		"/C/projects/mods/Minecraft/minecraft-sublime-project-creator.py",
 		"/C/projects/mods/Minecraft/tooltipsplus/tooltipsplus.sublime_project",
 		"/C/projects/tronic/cpp-example/src/main/main.cpp",
 		"/C/projects/tronic/cpp-example/src/math/Vector.cpp",
@@ -110,7 +156,7 @@
 	],
 	"find":
 	{
-		"height": 0.0
+		"height": 34.0
 	},
 	"find_in_files":
 	{
@@ -124,6 +170,12 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"\\n",
+			"\"",
+			"\t",
+			"\\nC:\\\\Users\\\\itsmi\\\\.gradle",
+			"C:\\\\",
+			"\\"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -150,7 +202,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 0.0
+		"height": 34.0
 	},
 	"input":
 	{
@@ -179,7 +231,19 @@
 		]
 	},
 	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 401.0
+	},
 	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.stino_build_panel":
+	{
+		"height": 0.0
+	},
+	"output.stino_panel":
 	{
 		"height": 0.0
 	},
@@ -187,7 +251,7 @@
 	"project": "tooltipsplus.sublime-project",
 	"replace":
 	{
-		"height": 0.0
+		"height": 64.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -225,7 +289,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 215.0,
+	"side_bar_width": 351.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{
