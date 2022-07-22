@@ -19,7 +19,7 @@ import java.util.Random;
 public class EnchantmentEnhancementMixin {
 @Inject(at = @At("HEAD"), method = "getName", cancellable = true)
     public void mixin(int level, CallbackInfoReturnable<Text> cir) {
-        MutableText mutableText = new TranslatableText(((Enchantment) ((Object) this)).getTranslationKey());
+        MutableText mutableText = Text.translatable(((Enchantment) ((Object) this)).getTranslationKey());
         mutableText.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(getEnchantmentColor(((Enchantment)(Object)this)))));
         if (level != 1 || ((Enchantment) ((Object) this)).getMaxLevel() != 1) {
             MutableText levelNumeral = (MutableText) Text.of(TooltipsPlus.romanNumeral(level));

@@ -4,13 +4,9 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.MapColor;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.enchantment.Enchantment;
@@ -129,11 +125,11 @@ public class TooltipsPlus implements ClientModInitializer {
             if (COLOR_CACHE.get(stackId) == null) {
                 Identifier texID = new Identifier(stackId.getNamespace(), "textures/item/"+stackId.getPath()+".png");
                 try {
-                resource = MinecraftClient.getInstance().getResourceManager().getResource(texID);
+                resource = MinecraftClient.getInstance().getResourceManager().getResourceOrThrow(texID);
                 } catch(Exception e) {
                     try {
                         texID = new Identifier(stackId.getNamespace(), "textures/block/"+stackId.getPath()+".png");
-                        resource = MinecraftClient.getInstance().getResourceManager().getResource(texID);
+                        resource = MinecraftClient.getInstance().getResourceManager().getResourceOrThrow(texID);
                     } catch (Exception e1) {
                         return 0;
                     }
@@ -282,7 +278,7 @@ public class TooltipsPlus implements ClientModInitializer {
                     default:
                         String str = key + ": " + ((NbtCompound) tag).get(key).toString();
                         if (!key.equals("Damage")) {
-                            Text text = new LiteralText(str).formatted(Formatting.GRAY);
+                            Text text = Text.literal(str).formatted(Formatting.GRAY);
                             tooltip.add(text);
                         }
                         break;
@@ -466,11 +462,7 @@ public class TooltipsPlus implements ClientModInitializer {
                     if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 346)) {
                         countFormatting = Formatting.DARK_GRAY;
                         String id = Registry.ITEM.getId(item).toString();
-                        mutableText = new LiteralText("[");
-                        Text name = new LiteralText(id);
-                        Formatting formatting = i % 2 == 0 ? Formatting.WHITE : Formatting.GRAY;
-                        mutableText.append(name).append("]");
-                        mutableText.formatted(formatting);
+                        mutableText = Text.literal("["+id+"]").formatted(i % 2 == 0 ? Formatting.WHITE : Formatting.GRAY);
                     }
                     else if (item instanceof BlockItem && item.getRarity(item.getDefaultStack()).equals(Rarity.COMMON)) {
                         mutableText.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(getColor(item.getDefaultStack()))));
@@ -484,7 +476,7 @@ public class TooltipsPlus implements ClientModInitializer {
         }
         if (j - i > 0) {
 //            TranslatableText key = new TranslatableText(SHULKER_KEY.getBoundKeyTranslationKey());
-            LiteralText key = new LiteralText("LAlt");
+            Text key = Text.literal("LAlt");
             tooltip.add(((MutableText) Text.of(key.getString()+ " to show " + (j - i) + " more...")).formatted(Formatting.ITALIC).formatted(Formatting.GRAY));
         }
     }

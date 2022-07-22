@@ -14,7 +14,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.text.MutableText;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
@@ -40,7 +39,7 @@ public class RenderNBTMixin {
                     NbtCompound tag = stack.getSubNbt("BlockEntityTag");
                     if (tag != null) {
                         if (tag.contains("LootTable", NbtElement.STRING_TYPE)) {
-                            tooltip.add(new LiteralText("???????"));
+                            tooltip.add(Text.literal("???????"));
                         }
 
                         if (tag.contains("Items", NbtElement.LIST_TYPE)) {
