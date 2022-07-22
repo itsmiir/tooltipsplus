@@ -1,12 +1,16 @@
 package com.miir;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.MapColor;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.enchantment.Enchantment;
@@ -21,21 +25,22 @@ import net.minecraft.potion.PotionUtil;
 import net.minecraft.resource.Resource;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.*;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.registry.Registry;
+import org.lwjgl.glfw.GLFW;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @Environment(EnvType.CLIENT)
-public class TooltipsPlus {
+public class TooltipsPlus implements ClientModInitializer {
+
+//    todo: get this working
+//    private static KeyBinding SHULKER_KEY;
+
 //    unsure how i feel about this colors system. felt cute, might refactor later
     public static final MapColor[] COLORS = new MapColor[] {
             MapColor.GOLD,                      MapColor.RED,                 MapColor.MAGENTA,                MapColor.LIME,
@@ -277,8 +282,7 @@ public class TooltipsPlus {
                     default:
                         String str = key + ": " + ((NbtCompound) tag).get(key).toString();
                         if (!key.equals("Damage")) {
-                            MutableText text = (MutableText)Text.EMPTY;
-                            text.append(str).formatted(Formatting.GRAY);
+                            Text text = new LiteralText(str).formatted(Formatting.GRAY);
                             tooltip.add(text);
                         }
                         break;
@@ -363,8 +367,7 @@ public class TooltipsPlus {
                 j++;
                 if (i <= k) {
                     ++i;
-                    MutableText mutableText = potStack.getTooltip(null, TooltipContext.Default.NORMAL).get(0).copy();
-                    mutableText.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(getColor(potStack))));
+                    MutableText mutableText = potStack.getName().copy().setStyle(Style.EMPTY.withColor(TextColor.fromRgb(getColor(potStack))));
                     if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 346)) {
                         countFormatting = Formatting.DARK_GRAY;
                         String id = Registry.ITEM.getId(pot).toString();
@@ -388,8 +391,7 @@ public class TooltipsPlus {
                 j++;
                 if (i <= k) {
                     ++i;
-                    MutableText mutableText = potStack.getName().copy();
-                    mutableText.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(getColor(potStack))));
+                    MutableText mutableText = potStack.getName().copy().setStyle(Style.EMPTY.withColor(TextColor.fromRgb(getColor(potStack))));
                     if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 346)) {
                         countFormatting = Formatting.DARK_GRAY;
                         String id = Registry.ITEM.getId(pot).toString();
@@ -413,8 +415,7 @@ public class TooltipsPlus {
                 j++;
                 if (i <= k) {
                     ++i;
-                    MutableText mutableText = potStack.getName().copy();
-                    mutableText.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(getColor(potStack))));
+                    MutableText mutableText = potStack.getName().copy().setStyle(Style.EMPTY.withColor(TextColor.fromRgb(getColor(potStack))));
                     if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 346)) {
                         countFormatting = Formatting.DARK_GRAY;
                         String id = Registry.ITEM.getId(pot).toString();
@@ -459,14 +460,14 @@ public class TooltipsPlus {
         for (Item item : condensedInv.keySet()) {
             if (!item.getDefaultStack().isEmpty()) {
                 ++j;
-                if (i <= k || InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 342)) {
+                if (i <= k || InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), (GLFW.GLFW_KEY_LEFT_ALT))) {
                     ++i;
-                    MutableText mutableText = (MutableText) item.getDefaultStack().getTooltip(null, TooltipContext.Default.NORMAL).get(0).copy();
+                    MutableText mutableText = item.getName().copy().setStyle(Style.EMPTY.withColor(TextColor.fromRgb(getColor(item.getDefaultStack()))));
                     if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 346)) {
                         countFormatting = Formatting.DARK_GRAY;
                         String id = Registry.ITEM.getId(item).toString();
-                        mutableText = (MutableText) Text.of("[");
-                        MutableText name = (MutableText) Text.of(id);
+                        mutableText = new LiteralText("[");
+                        Text name = new LiteralText(id);
                         Formatting formatting = i % 2 == 0 ? Formatting.WHITE : Formatting.GRAY;
                         mutableText.append(name).append("]");
                         mutableText.formatted(formatting);
@@ -482,7 +483,9 @@ public class TooltipsPlus {
             }
         }
         if (j - i > 0) {
-            tooltip.add(((MutableText) Text.of("LAlt to show " + (j - i) + " more...")).formatted(Formatting.ITALIC).formatted(Formatting.GRAY));
+//            TranslatableText key = new TranslatableText(SHULKER_KEY.getBoundKeyTranslationKey());
+            LiteralText key = new LiteralText("LAlt");
+            tooltip.add(((MutableText) Text.of(key.getString()+ " to show " + (j - i) + " more...")).formatted(Formatting.ITALIC).formatted(Formatting.GRAY));
         }
     }
 
@@ -499,4 +502,8 @@ public class TooltipsPlus {
             "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"
     };
 
+    @Override
+    public void onInitializeClient() {
+//        SHULKER_KEY = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.shulker", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, KeyBinding.INVENTORY_CATEGORY));
+    }
 }
