@@ -48,7 +48,7 @@ public class TooltipsPlus implements ClientModInitializer {
             MapColor.ORANGE,                    MapColor.OAK_TAN,             MapColor.WHITE_GRAY,             MapColor.BRIGHT_RED,
             MapColor.DULL_RED,                  MapColor.ORANGE,              MapColor.LIME,                   MapColor.OAK_TAN,
             MapColor.BRIGHT_RED,                MapColor.PALE_PURPLE,         MapColor.YELLOW,                 MapColor.LAPIS_BLUE,
-            MapColor.DIAMOND_BLUE,              MapColor.BRIGHT_RED
+            MapColor.DIAMOND_BLUE,              MapColor.BRIGHT_RED,          MapColor.CYAN
     };
     private static final Enchantment[] ENCHANTMENTS = new Enchantment[] {
             Enchantments.MENDING,               Enchantments.VANISHING_CURSE, Enchantments.LURE,               Enchantments.LUCK_OF_THE_SEA,
@@ -60,7 +60,7 @@ public class TooltipsPlus implements ClientModInitializer {
             Enchantments.FIRE_ASPECT,           Enchantments.LOOTING,         Enchantments.SWEEPING,           Enchantments.POWER,
             Enchantments.PUNCH,                 Enchantments.FLAME,           Enchantments.INFINITY,           Enchantments.LOYALTY,
             Enchantments.IMPALING,              Enchantments.RIPTIDE,         Enchantments.CHANNELING,         Enchantments.MULTISHOT,
-            Enchantments.QUICK_CHARGE,          Enchantments.PIERCING
+            Enchantments.QUICK_CHARGE,          Enchantments.PIERCING,        Enchantments.SWIFT_SNEAK
     };
     public static final Object2ObjectArrayMap<Enchantment, MapColor> ENCH_COLORS = new Object2ObjectArrayMap<>(ENCHANTMENTS, COLORS);
     private static final Object2ObjectArrayMap<Identifier, Integer> COLOR_CACHE = new Object2ObjectArrayMap<>();

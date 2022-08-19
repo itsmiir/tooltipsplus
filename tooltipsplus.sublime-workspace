@@ -135,7 +135,8 @@
 		"/C/projects/mods/Minecraft/tooltipsplus/src/main/java/com",
 		"/C/projects/mods/Minecraft/tooltipsplus/src/main/java/com/miir",
 		"/C/projects/mods/Minecraft/tooltipsplus/src/main/java/com/miir/tooltipsplus",
-		"/C/projects/mods/Minecraft/tooltipsplus/src/main/java/com/miir/tooltipsplus/mixin"
+		"/C/projects/mods/Minecraft/tooltipsplus/src/main/java/com/miir/tooltipsplus/mixin",
+		"/C/projects/mods/Minecraft/tooltipsplus/src/main/resources"
 	],
 	"file_history":
 	[
@@ -156,7 +157,7 @@
 	],
 	"find":
 	{
-		"height": 34.0
+		"height": 37.0
 	},
 	"find_in_files":
 	{
@@ -202,7 +203,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 34.0
+		"height": 37.0
 	},
 	"input":
 	{
@@ -251,7 +252,7 @@
 	"project": "tooltipsplus.sublime-project",
 	"replace":
 	{
-		"height": 64.0
+		"height": 70.0
 	},
 	"save_all_on_build": true,
 	"select_file":
