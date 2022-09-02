@@ -1,9 +1,12 @@
 package com.miir.tooltipsplus.mixin;
 
 import com.miir.TooltipsPlus;
+import com.miir.tooltipsplus.ExtraTooltips;
+import com.miir.tooltipsplus.NBTLogic;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BeehiveBlock;
+import net.minecraft.block.PlayerSkullBlock;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.BlockItem;
@@ -27,15 +30,17 @@ import java.util.List;
 @Environment(EnvType.CLIENT)
 @Mixin(Item.class)
 public class RenderNBTMixin {
-    @Inject(at = @At("HEAD"), method = "appendTooltip")
+    @Inject(at = @At("HEAD"), method = "appendTooltip", cancellable = true)
     private void mixin(ItemStack stack, World world, List<Text> tooltip, TooltipContext context, CallbackInfo ci) {
         Item item = stack.getItem();
         if (stack.hasNbt()) {
             if (item instanceof BlockItem) {
-                if (((BlockItem) stack.getItem()).getBlock() instanceof BeehiveBlock) {
-                    tooltip.add(TooltipsPlus.addBeehiveTooltip(stack));
-                }
-                if (stack.getNbt().contains("BlockEntityTag")) {
+                if (((BlockItem) stack.getItem()).getBlock() instanceof BeehiveBlock && TooltipsPlus.CONFIG.showBees) {
+                    tooltip.add(ExtraTooltips.addBeehiveTooltip(stack));
+                } else if (((BlockItem) stack.getItem()).getBlock() instanceof PlayerSkullBlock && TooltipsPlus.CONFIG.skullTips) {
+                    tooltip.add(ExtraTooltips.getHeadTooltip(stack));
+                    ci.cancel();
+                } else if (stack.getNbt().contains("BlockEntityTag")) {
                     NbtCompound tag = stack.getSubNbt("BlockEntityTag");
                     if (tag != null) {
                         if (tag.contains("LootTable", NbtElement.STRING_TYPE)) {
@@ -43,13 +48,12 @@ public class RenderNBTMixin {
                         }
 
                         if (tag.contains("Items", NbtElement.LIST_TYPE)) {
-                            TooltipsPlus.addItemTooltip(tooltip, tag);
+                            NBTLogic.addItemTooltip(tooltip, tag);
                         }
                     }
                 } else {
                     NbtCompound tag = stack.getNbt();
-                    if (tag != null && MinecraftClient.getInstance().options.advancedItemTooltips)
-                        TooltipsPlus.addTooltip(tooltip, tag);
+                    if (tag != null && MinecraftClient.getInstance().options.advancedItemTooltips) NBTLogic.addTooltip(tooltip, tag);
                 }
             } else if (item.equals(Items.WRITABLE_BOOK) || item.equals(Items.WRITTEN_BOOK)) {
                 try {
@@ -61,11 +65,11 @@ public class RenderNBTMixin {
             } else {
                 NbtCompound tag = stack.getNbt();
                 if (tag != null && MinecraftClient.getInstance().options.advancedItemTooltips)
-                    TooltipsPlus.addTooltip(tooltip, tag);
+                    NBTLogic.addTooltip(tooltip, tag);
             }
         }
-        if (item.equals(Items.CLOCK)) {
-            tooltip.add(TooltipsPlus.getClockTime());
+        if (item.equals(Items.CLOCK) && TooltipsPlus.CONFIG.clockTime) {
+            tooltip.add(ExtraTooltips.getClockTime());
         }
     }
 }

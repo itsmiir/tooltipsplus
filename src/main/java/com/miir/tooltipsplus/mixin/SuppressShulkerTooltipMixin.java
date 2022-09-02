@@ -30,9 +30,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.List;
 
 @Environment(EnvType.CLIENT)
-@Mixin(value = ShulkerBoxBlock.class, priority = 2000)
+@Mixin(ShulkerBoxBlock.class)
 public class SuppressShulkerTooltipMixin {
-
     @Environment(EnvType.CLIENT)
     @Inject(method = "appendTooltip", at = @At("HEAD"), cancellable = true)
     public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options, CallbackInfo ci){

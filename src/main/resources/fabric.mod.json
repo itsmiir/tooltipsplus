@@ -20,6 +20,9 @@
   "entrypoints": {
     "client": [
       "com.miir.TooltipsPlus"
+    ],
+    "modmenu": [
+      "com.miir.tooltipsplus.integration.ModMenuIntegration"
     ]
   },
   "mixins": [
@@ -28,7 +31,6 @@
 
   "depends": {
     "fabricloader": ">=0.13.3",
-    "fabric": "*",
     "minecraft": ">=1.19",
     "java": ">=17"
   }
