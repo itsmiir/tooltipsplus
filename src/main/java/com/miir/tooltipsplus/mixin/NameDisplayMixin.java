@@ -1,6 +1,7 @@
 package com.miir.tooltipsplus.mixin;
 
 import com.miir.TooltipsPlus;
+import com.miir.tooltipsplus.ColorFinder;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.item.ItemStack;
@@ -21,7 +22,10 @@ public abstract class NameDisplayMixin {
                     target = "Lnet/minecraft/item/ItemStack;hasCustomName()Z",
             shift = At.Shift.BEFORE)
     )
-    public MutableText mixin(MutableText mutableText) {
-        return mutableText.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(TooltipsPlus.getColor((((ItemStack) (Object) this))))));
+    public MutableText mixin(MutableText original) {
+        if (TooltipsPlus.CONFIG.colors) {
+            return original.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(ColorFinder.getColor((((ItemStack) (Object) this))))));
+        }
+        return original;
     }
 }

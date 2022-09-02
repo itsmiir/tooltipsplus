@@ -1,3 +1,14 @@
 {
-  "key.shulker": "Expand Shulker Menu"
+  "key.shulker": "expand shulker menu",
+  "text.autoconfig.tooltipsplus.option.colors": "item name colors",
+  "text.autoconfig.tooltipsplus.option.enchantColors": "custom colors for enchantments",
+  "text.autoconfig.tooltipsplus.option.potionColors": "custom colors for potions",
+  "text.autoconfig.tooltipsplus.option.showBees": "extra beehive information",
+  "text.autoconfig.tooltipsplus.option.clockTime": "show ingame time on clocks",
+  "text.autoconfig.tooltipsplus.option.showRepairCost": "item repair cost",
+  "text.autoconfig.tooltipsplus.option.numericalEnchants": "change roman numeral enchantments to arabic numerals",
+  "text.autoconfig.tooltipsplus.option.maxEnchantPlus": "if an enchantment is maxed, replace its value with a +",
+  "text.autoconfig.tooltipsplus.option.showNBT": "misc. item NBT tags",
+  "text.autoconfig.tooltipsplus.option.skullTips": "player skull usernames"
+
 }

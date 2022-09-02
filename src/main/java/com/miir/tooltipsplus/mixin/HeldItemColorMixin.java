@@ -1,6 +1,7 @@
 package com.miir.tooltipsplus.mixin;
 
 import com.miir.TooltipsPlus;
+import com.miir.tooltipsplus.ColorFinder;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -25,6 +26,7 @@ public class HeldItemColorMixin {
                     shift = At.Shift.BEFORE,
                     value = "INVOKE"))
     private MutableText mixin(MutableText original) {
-        return original.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(TooltipsPlus.getColor(this.currentStack))));
+        if (TooltipsPlus.CONFIG.colors) return original.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(ColorFinder.getColor(this.currentStack))));
+        return original;
     }
 }
