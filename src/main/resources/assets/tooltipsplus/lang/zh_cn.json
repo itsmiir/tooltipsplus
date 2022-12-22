@@ -1,0 +1,14 @@
+{
+  "key.shulker": "展开潜影盒菜单",
+  "text.autoconfig.tooltipsplus.option.colors": "物品名称颜色",
+  "text.autoconfig.tooltipsplus.option.enchantColors": "对附魔的自定义颜色",
+  "text.autoconfig.tooltipsplus.option.potionColors": "对药水的自定义颜色",
+  "text.autoconfig.tooltipsplus.option.showBees": "额外的蜂巢信息",
+  "text.autoconfig.tooltipsplus.option.clockTime": "在钟上显示游戏内时间",
+  "text.autoconfig.tooltipsplus.option.showRepairCost": "物品修复花费",
+  "text.autoconfig.tooltipsplus.option.numericalEnchants": "将附魔中的罗马数字改成阿拉伯数字",
+  "text.autoconfig.tooltipsplus.option.maxEnchantPlus": "如果一个附魔是满级的，用一个「+」来代替它的等级",
+  "text.autoconfig.tooltipsplus.option.showNBT": "杂项物品 NBT 标签",
+  "text.autoconfig.tooltipsplus.option.skullTips": "玩家头颅用户名"
+
+}
