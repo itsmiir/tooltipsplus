@@ -131,10 +131,11 @@ abstract public class ColorFinder {
     }
 
     public static int ensureReadability(int i) {
+        if (i == 0)  return 0xFFFFFF;
         int r = (i & 0xFF0000) >> 16;
         int g = (i & 0x00FF00) >>  8;
         int b = (i & 0x0000FF)/*:)*/;
-        while (r + b + g < 44+44+44) {
+        while (r  +  b  +  g < 132) {
             r *= 1.1;
             b *= 1.1;
             g *= 1.1;
