@@ -12,12 +12,12 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtil;
+import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Rarity;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.registry.Registry;
 
 import java.util.List;
 
@@ -38,17 +38,17 @@ public abstract class NBTLogic {
                 }
             }
         } else {
+            assert tag instanceof NbtCompound;
             for (String key :
                     ((NbtCompound) tag).getKeys()) {
                 switch (((NbtCompound) tag).getType(key)) {
-                    case 10:
-                    case 9:
+                    case 10, 9 -> {
                         if (!key.equals("Enchantments") && !key.equals("display") && !key.equals("StoredEnchantments") && TooltipsPlus.CONFIG.showNBT) {
                             tooltip.add(Text.of(key + ":"));
                             addTooltip(tooltip, ((NbtCompound) tag).get(key));
                         }
-                        break;
-                    default:
+                    }
+                    default -> {
                         String str = key + ": " + ((NbtCompound) tag).get(key);
                         if (key.equals("RepairCost") && !TooltipsPlus.CONFIG.showRepairCost) continue;
                         if (!key.equals("Damage") && TooltipsPlus.CONFIG.showNBT) {
@@ -56,7 +56,7 @@ public abstract class NBTLogic {
                             text.append(str).formatted(Formatting.GRAY);
                             tooltip.add(text);
                         }
-                        break;
+                    }
                 }
 
             }
@@ -137,11 +137,11 @@ public abstract class NBTLogic {
                 j++;
                 if (i <= k) {
                     ++i;
-                    MutableText mutableText = potStack.getTooltip(null, TooltipContext.Default.NORMAL).get(0).copy();
+                    MutableText mutableText = potStack.getTooltip(null, TooltipContext.Default.BASIC).get(0).copy();
                     mutableText.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(ColorFinder.getColor(potStack))));
                     if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 346)) {
                         countFormatting = Formatting.DARK_GRAY;
-                        String id = Registry.ITEM.getId(pot).toString();
+                        String id = Registries.ITEM.getId(pot).toString();
                         mutableText = (MutableText) Text.of("[");
                         MutableText name = (MutableText) Text.of(id);
                         Formatting formatting = i % 2 == 0 ? Formatting.WHITE : Formatting.GRAY;
@@ -166,7 +166,7 @@ public abstract class NBTLogic {
                     mutableText.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(ColorFinder.getColor(potStack))));
                     if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 346)) {
                         countFormatting = Formatting.DARK_GRAY;
-                        String id = Registry.ITEM.getId(pot).toString();
+                        String id = Registries.ITEM.getId(pot).toString();
                         mutableText = (MutableText) Text.of("[");
                         MutableText name = (MutableText) Text.of(id);
                         Formatting formatting = i % 2 == 0 ? Formatting.WHITE : Formatting.GRAY;
@@ -191,7 +191,7 @@ public abstract class NBTLogic {
                     mutableText.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(ColorFinder.getColor(potStack))));
                     if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 346)) {
                         countFormatting = Formatting.DARK_GRAY;
-                        String id = Registry.ITEM.getId(pot).toString();
+                        String id = Registries.ITEM.getId(pot).toString();
                         mutableText = (MutableText) Text.of("[");
                         MutableText name = (MutableText) Text.of(id);
                         Formatting formatting = i % 2 == 0 ? Formatting.WHITE : Formatting.GRAY;
@@ -217,7 +217,7 @@ public abstract class NBTLogic {
                         mutableText.formatted(disc.getRarity(disc.getDefaultStack()).formatting);
                         if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 346)) {
                             countFormatting = Formatting.DARK_GRAY;
-                            String id = Registry.ITEM.getId(disc).toString();
+                            String id = Registries.ITEM.getId(disc).toString();
                             mutableText = (MutableText) Text.of("[");
                             MutableText name = (MutableText) Text.of(id);
                             Formatting formatting = i % 2 == 0 ? Formatting.WHITE : Formatting.GRAY;
@@ -237,10 +237,10 @@ public abstract class NBTLogic {
                 ++j;
                 if (i <= k || InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 342)) {
                     ++i;
-                    MutableText mutableText = item.getDefaultStack().getTooltip(null, TooltipContext.Default.NORMAL).get(0).copy();
+                    MutableText mutableText = item.getDefaultStack().getTooltip(null, TooltipContext.Default.BASIC).get(0).copy();
                     if (InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), 346)) {
                         countFormatting = Formatting.DARK_GRAY;
-                        String id = Registry.ITEM.getId(item).toString();
+                        String id = Registries.ITEM.getId(item).toString();
                         mutableText = (MutableText) Text.of("[");
                         MutableText name = (MutableText) Text.of(id);
                         Formatting formatting = i % 2 == 0 ? Formatting.WHITE : Formatting.GRAY;

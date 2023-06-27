@@ -7,10 +7,10 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.item.*;
 import net.minecraft.potion.PotionUtil;
+import net.minecraft.registry.Registries;
 import net.minecraft.resource.Resource;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
-import net.minecraft.util.registry.Registry;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -27,7 +27,7 @@ abstract public class ColorFinder {
     public static int getTextureColor(ItemStack stack) {
 //        this feels like a very heavy function, but it's Good for Compat™
         if (MinecraftClient.getInstance().world != null) {
-            Identifier stackId = Registry.ITEM.getId(stack.getItem());
+            Identifier stackId = Registries.ITEM.getId(stack.getItem());
 //            that's right, we're caching babe
             if (TooltipsPlus.COLOR_CACHE.get(stackId) == null) {
                 Identifier texID = new Identifier(stackId.getNamespace(), "textures/item/"+stackId.getPath()+".png");
@@ -84,7 +84,7 @@ abstract public class ColorFinder {
     public static int inferColor(ItemStack stack) {
 //        this is a bit suspicious and pretty bad for compat tbh
 //        also wtf is regex
-        String name = Registry.ITEM.getId(stack.getItem()).toString();
+        String name = Registries.ITEM.getId(stack.getItem()).toString();
         if      (name.contains("black_") || name.contains(":gray_")) return MapColor.GRAY.color;
         else if (name.contains("light_gray_")) return MapColor.LIGHT_GRAY.color;
         else if (name.contains("white_")) return MapColor.WHITE.color;
