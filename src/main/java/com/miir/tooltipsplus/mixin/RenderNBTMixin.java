@@ -7,7 +7,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BeehiveBlock;
 import net.minecraft.block.PlayerSkullBlock;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -33,43 +33,47 @@ public class RenderNBTMixin {
     @Inject(at = @At("HEAD"), method = "appendTooltip", cancellable = true)
     private void mixin(ItemStack stack, World world, List<Text> tooltip, TooltipContext context, CallbackInfo ci) {
         Item item = stack.getItem();
+        if ((TooltipsPlus.CONFIG.shulkers || !(item instanceof BlockItem && (((BlockItem) item).getBlock() instanceof ShulkerBoxBlock)))) {
         if (stack.hasNbt()) {
             if (item instanceof BlockItem) {
-                if (((BlockItem) stack.getItem()).getBlock() instanceof BeehiveBlock && TooltipsPlus.CONFIG.showBees) {
-                    tooltip.add(ExtraTooltips.addBeehiveTooltip(stack));
-                } else if (((BlockItem) stack.getItem()).getBlock() instanceof PlayerSkullBlock && TooltipsPlus.CONFIG.skullTips) {
-                    tooltip.add(ExtraTooltips.getHeadTooltip(stack));
-                    ci.cancel();
-                } else if (stack.getNbt().contains("BlockEntityTag")) {
-                    NbtCompound tag = stack.getSubNbt("BlockEntityTag");
-                    if (tag != null) {
-                        if (tag.contains("LootTable", NbtElement.STRING_TYPE)) {
-                            tooltip.add(Text.literal("???????"));
-                        }
+                    if (((BlockItem) stack.getItem()).getBlock() instanceof BeehiveBlock && TooltipsPlus.CONFIG.showBees) {
+                        tooltip.add(ExtraTooltips.addBeehiveTooltip(stack));
+                    } else if (((BlockItem) stack.getItem()).getBlock() instanceof PlayerSkullBlock && TooltipsPlus.CONFIG.skullTips) {
+                        tooltip.add(ExtraTooltips.getHeadTooltip(stack));
+                        ci.cancel();
+                    } else if (stack.getNbt().contains("BlockEntityTag")) {
+                        NbtCompound tag = stack.getSubNbt("BlockEntityTag");
+                        if (tag != null) {
+                            if (tag.contains("LootTable", NbtElement.STRING_TYPE)) {
+                                tooltip.add(Text.literal("???????"));
+                            }
 
-                        if (tag.contains("Items", NbtElement.LIST_TYPE)) {
-                            NBTLogic.addItemTooltip(tooltip, tag);
+                            if (tag.contains("Items", NbtElement.LIST_TYPE)) {
+                                NBTLogic.addItemTooltip(tooltip, tag);
+                            }
                         }
+                    } else {
+                        NbtCompound tag = stack.getNbt();
+                        if (tag != null /*&& MinecraftClient.getInstance().options.advancedItemTooltips*/)
+                            NBTLogic.addTooltip(tooltip, tag);
+                    }
+                } else if (item.equals(Items.WRITABLE_BOOK) || item.equals(Items.WRITTEN_BOOK)) {
+                    try {
+                        int pages = ((NbtList) stack.getNbt().get("pages")).size();
+                        MutableText text = (MutableText) Text.of("Book of " + pages + (pages == 1 ? " page" : " pages"));
+                        text.formatted(Formatting.GRAY);
+                        tooltip.add(text);
+                    } catch (NullPointerException ignored) {
                     }
                 } else {
                     NbtCompound tag = stack.getNbt();
-                    if (tag != null && MinecraftClient.getInstance().options.advancedItemTooltips) NBTLogic.addTooltip(tooltip, tag);
+                    if (tag != null /*&& MinecraftClient.getInstance().options.advancedItemTooltips*/)
+                        NBTLogic.addTooltip(tooltip, tag);
                 }
-            } else if (item.equals(Items.WRITABLE_BOOK) || item.equals(Items.WRITTEN_BOOK)) {
-                try {
-                    int pages = ((NbtList) stack.getNbt().get("pages")).size();
-                    MutableText text = (MutableText) Text.of("Book of " + pages + (pages == 1 ? " page" : " pages"));
-                    text.formatted(Formatting.GRAY);
-                    tooltip.add(text);
-                } catch (NullPointerException ignored){}
-            } else {
-                NbtCompound tag = stack.getNbt();
-                if (tag != null && MinecraftClient.getInstance().options.advancedItemTooltips)
-                    NBTLogic.addTooltip(tooltip, tag);
             }
-        }
-        if (item.equals(Items.CLOCK) && TooltipsPlus.CONFIG.clockTime) {
-            tooltip.add(ExtraTooltips.getClockTime());
+            if (item.equals(Items.CLOCK) && TooltipsPlus.CONFIG.clockTime) {
+                tooltip.add(ExtraTooltips.getClockTime());
+            }
         }
     }
 }
