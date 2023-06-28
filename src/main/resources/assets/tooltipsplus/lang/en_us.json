@@ -9,6 +9,6 @@
   "text.autoconfig.tooltipsplus.option.numericalEnchants": "change roman numeral enchantments to arabic numerals",
   "text.autoconfig.tooltipsplus.option.maxEnchantPlus": "if an enchantment is maxed, replace its value with a +",
   "text.autoconfig.tooltipsplus.option.showNBT": "misc. item NBT tags",
-  "text.autoconfig.tooltipsplus.option.skullTips": "player skull usernames"
-
+  "text.autoconfig.tooltipsplus.option.skullTips": "player skull usernames",
+  "text.autoconfig.tooltipsplus.option.shulkers": "better shulker tooltips"
 }
