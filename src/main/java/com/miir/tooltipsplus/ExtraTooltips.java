@@ -61,7 +61,8 @@ public abstract class ExtraTooltips {
 
     public static Text addBeehiveTooltip(ItemStack stack) {
         assert stack.getNbt() != null;
-        MutableText text = (MutableText) Text.of("Contains " + ((NbtList) Objects.requireNonNull(((NbtCompound) Objects.requireNonNull(stack.getNbt().get("BlockEntityTag"))).get("Bees"))).size() + " bees");
+        int bees = ((NbtList) Objects.requireNonNull(((NbtCompound) Objects.requireNonNull(stack.getNbt().get("BlockEntityTag"))).get("Bees"))).size();
+        MutableText text = (MutableText) Text.of("Contains " + bees + (bees == 1 ? " bee" : " bees"));
         text.formatted(Formatting.GRAY);
         return text;
     }
@@ -71,47 +72,63 @@ public abstract class ExtraTooltips {
             return Integer.toString(num);
         }
         switch (num) {
-            case 0:
+            case 0 -> {
                 return "Nulla";
+            }
 //            roman numerals don't have 0, but apparently they used that
-            case 1:
+            case 1 -> {
                 return "I";
-            case 2:
+            }
+            case 2 -> {
                 return "II";
-            case 3:
+            }
+            case 3 -> {
                 return "III";
-            case 4:
+            }
+            case 4 -> {
                 return "IV";
-            case 5:
+            }
+            case 5 -> {
                 return "V";
-            case 6:
+            }
+            case 6 -> {
                 return "VI";
-            case 7:
+            }
+            case 7 -> {
                 return "VII";
-            case 8:
+            }
+            case 8 -> {
                 return "VIII";
-            case 9:
+            }
+            case 9 -> {
                 return "IX";
-            case 10:
+            }
+            case 10 -> {
                 return "X";
-            case 50:
+            }
+            case 50 -> {
                 return "L";
-            case 100:
+            }
+            case 100 -> {
                 return "C";
-            case 500:
+            }
+            case 500 -> {
                 return "D";
-            case 1000:
+            }
+            case 1000 -> {
                 return "M";
-            default:
+            }
+            default -> {
                 if (num > 3999) {
                     return ((Integer) num).toString();
                 }
                 return (
-                          THOUS[num / 1000]
-                        + HUNDS[num / 100 % 10]
-                        + TENS[num / 10 % 10]
-                        + ONES[num % 10]
-                        );
+                        THOUS[num / 1000]
+                                + HUNDS[num / 100 % 10]
+                                + TENS[num / 10 % 10]
+                                + ONES[num % 10]
+                );
+            }
         }
     }
     private static final String[] THOUS = new String[] {
