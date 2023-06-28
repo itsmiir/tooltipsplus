@@ -50,8 +50,7 @@ public abstract class NBTLogic {
                         break;
                     default:
                         String str = key + ": " + ((NbtCompound) tag).get(key);
-                        if (key.equals("RepairCost") && !TooltipsPlus.CONFIG.showRepairCost) continue;
-                        if (!key.equals("Damage") && TooltipsPlus.CONFIG.showNBT) {
+                        if (!key.equals("Damage") && TooltipsPlus.CONFIG.showNBT || (key.equals("RepairCost") && TooltipsPlus.CONFIG.showRepairCost)) {
                             MutableText text = MutableText.of(TextContent.EMPTY);
                             text.append(str).formatted(Formatting.GRAY);
                             tooltip.add(text);

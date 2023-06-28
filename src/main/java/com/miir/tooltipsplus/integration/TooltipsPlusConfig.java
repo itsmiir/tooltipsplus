@@ -15,4 +15,5 @@ public class TooltipsPlusConfig implements ConfigData {
     public boolean maxEnchantPlus = false;
     public boolean skullTips = true;
     public boolean showNBT = true;
+    public boolean shulkers = true;
 }
