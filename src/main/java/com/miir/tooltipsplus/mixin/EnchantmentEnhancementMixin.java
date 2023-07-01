@@ -24,6 +24,7 @@ public abstract class EnchantmentEnhancementMixin {
 
     @Inject(at = @At("HEAD"), method = "getName", cancellable = true)
     public void mixin(int level, CallbackInfoReturnable<Text> cir) {
+        if (TooltipsPlus.CONFIG == null) return; // in case this method is accessed in a mod that gets loaded earlier's onInitialize method
         MutableText mutableText = Text.translatable(((Enchantment) ((Object) this)).getTranslationKey());
         if (TooltipsPlus.CONFIG.enchantColors) mutableText.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(getEnchantmentColor(((Enchantment)(Object)this)))));
         if ((level != 1 || ((Enchantment) ((Object) this)).getMaxLevel() != 1)) {

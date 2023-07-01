@@ -32,6 +32,7 @@ import java.util.List;
 public class RenderNBTMixin {
     @Inject(at = @At("HEAD"), method = "appendTooltip", cancellable = true)
     private void mixin(ItemStack stack, World world, List<Text> tooltip, TooltipContext context, CallbackInfo ci) {
+        if (TooltipsPlus.CONFIG == null) return;
         Item item = stack.getItem();
         if ((TooltipsPlus.CONFIG.shulkers || !(item instanceof BlockItem && (((BlockItem) item).getBlock() instanceof ShulkerBoxBlock)))) {
         if (stack.hasNbt()) {

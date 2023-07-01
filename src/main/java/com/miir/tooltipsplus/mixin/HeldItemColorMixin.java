@@ -26,6 +26,7 @@ public class HeldItemColorMixin {
                     shift = At.Shift.BEFORE,
                     value = "INVOKE"))
     private MutableText mixin(MutableText original) {
+        if (TooltipsPlus.CONFIG == null) return original;
         if (TooltipsPlus.CONFIG.colors) return original.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(ColorFinder.getColor(this.currentStack))));
         return original;
     }
