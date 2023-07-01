@@ -23,6 +23,7 @@ public abstract class NameDisplayMixin {
             shift = At.Shift.BEFORE)
     )
     public MutableText mixin(MutableText original) {
+        if (TooltipsPlus.CONFIG == null) return original;
         if (TooltipsPlus.CONFIG.colors) {
             return original.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(ColorFinder.getColor((((ItemStack) (Object) this))))));
         }
