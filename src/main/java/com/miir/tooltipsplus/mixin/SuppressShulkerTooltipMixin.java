@@ -22,6 +22,7 @@ public class SuppressShulkerTooltipMixin {
     @Environment(EnvType.CLIENT)
     @Inject(method = "appendTooltip", at = @At("HEAD"), cancellable = true)
     public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options, CallbackInfo ci){
+        if (TooltipsPlus.CONFIG == null) return;
         if (TooltipsPlus.CONFIG.shulkers) {
             ci.cancel();
         }
