@@ -37,9 +37,9 @@ public class RenderNBTMixin {
         if ((TooltipsPlus.CONFIG.shulkers || !(item instanceof BlockItem && (((BlockItem) item).getBlock() instanceof ShulkerBoxBlock)))) {
         if (stack.hasNbt()) {
             if (item instanceof BlockItem) {
-                    if (((BlockItem) stack.getItem()).getBlock() instanceof BeehiveBlock && TooltipsPlus.CONFIG.showBees) {
+                    if (((BlockItem) stack.getItem()).getBlock() instanceof BeehiveBlock && TooltipsPlus.CONFIG.showBees && NBTLogic.hasBees(stack)) {
                         tooltip.add(ExtraTooltips.addBeehiveTooltip(stack));
-                    } else if (((BlockItem) stack.getItem()).getBlock() instanceof PlayerSkullBlock && TooltipsPlus.CONFIG.skullTips) {
+                    } else if (((BlockItem) stack.getItem()).getBlock() instanceof PlayerSkullBlock && TooltipsPlus.CONFIG.skullTips && NBTLogic.hasSkowner(stack)) {
                         tooltip.add(ExtraTooltips.getHeadTooltip(stack));
                         ci.cancel();
                     } else if (stack.getNbt().contains("BlockEntityTag")) {

@@ -2,6 +2,8 @@ package com.miir.tooltipsplus;
 
 import com.miir.TooltipsPlus;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import net.minecraft.block.BeehiveBlock;
+import net.minecraft.block.SkullBlock;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.util.InputUtil;
@@ -20,6 +22,7 @@ import net.minecraft.util.Rarity;
 import net.minecraft.util.collection.DefaultedList;
 
 import java.util.List;
+import java.util.Objects;
 
 public abstract class NBTLogic {
     public static void addTooltip(List<Text> tooltip, NbtElement tag) {
@@ -259,5 +262,27 @@ public abstract class NBTLogic {
         if (j - i > 0) {
             tooltip.add(((MutableText) Text.of("LAlt to show " + (j - i) + " more...")).formatted(Formatting.ITALIC).formatted(Formatting.GRAY));
         }
+    }
+    public static boolean hasBees(ItemStack stack) {
+        if (stack.getItem() instanceof BlockItem bi) {
+            if (bi.getBlock() instanceof BeehiveBlock) {
+                if (stack.getNbt() != null) {
+                    try {
+                        return !((NbtList) Objects.requireNonNull(((NbtCompound) Objects.requireNonNull(stack.getNbt().get("BlockEntityTag"))).get("Bees"))).isEmpty();
+                    } catch (NullPointerException ignored) {
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean hasSkowner(ItemStack stack) {
+        if (stack.getItem() instanceof BlockItem bi && stack.getNbt() != null) {
+            if (bi.getBlock() instanceof SkullBlock) {
+                return (stack.getNbt().contains("SkullOwner", NbtElement.COMPOUND_TYPE));
+            }
+        }
+        return false;
     }
 }
