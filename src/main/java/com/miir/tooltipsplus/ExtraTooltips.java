@@ -60,11 +60,14 @@ public abstract class ExtraTooltips {
     }
 
     public static Text addBeehiveTooltip(ItemStack stack) {
-        assert stack.getNbt() != null;
-        int bees = ((NbtList) Objects.requireNonNull(((NbtCompound) Objects.requireNonNull(stack.getNbt().get("BlockEntityTag"))).get("Bees"))).size();
-        MutableText text = (MutableText) Text.of("Contains " + bees + (bees == 1 ? " bee" : " bees"));
-        text.formatted(Formatting.GRAY);
-        return text;
+        try {
+            int bees = ((NbtList) Objects.requireNonNull(((NbtCompound) Objects.requireNonNull(stack.getNbt().get("BlockEntityTag"))).get("Bees"))).size();
+            MutableText text = (MutableText) Text.of("Contains " + bees + (bees == 1 ? " bee" : " bees"));
+            text.formatted(Formatting.GRAY);
+            return text;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static String romanNumeral(int num) {
