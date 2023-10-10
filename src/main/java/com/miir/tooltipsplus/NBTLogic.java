@@ -2,6 +2,8 @@ package com.miir.tooltipsplus;
 
 import com.miir.TooltipsPlus;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import net.minecraft.block.BeehiveBlock;
+import net.minecraft.block.SkullBlock;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.util.InputUtil;
@@ -20,6 +22,7 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.registry.Registry;
 
 import java.util.List;
+import java.util.Objects;
 
 public abstract class NBTLogic {
     public static void addTooltip(List<Text> tooltip, NbtElement tag) {
@@ -61,6 +64,7 @@ public abstract class NBTLogic {
             }
         }
     }
+
     public static void addItemTooltip(List<Text> tooltip, NbtCompound tag) {
         DefaultedList<ItemStack> defaultedList = DefaultedList.ofSize(27, ItemStack.EMPTY);
         Inventories.readNbt(tag, defaultedList);
@@ -105,19 +109,16 @@ public abstract class NBTLogic {
                     }
                 }
 
-            }
-            else if (item instanceof MusicDiscItem) {
+            } else if (item instanceof MusicDiscItem) {
                 hasDiscs = true;
                 SoundEvent music = ((MusicDiscItem) item).getSound();
                 if (discs.containsKey(music)) {
                     int count = discs.get(music);
                     discs.put(music, count + stack1.getCount());
-                }
-                else {
+                } else {
                     discs.put(music, stack1.getCount());
                 }
-            }
-            else {
+            } else {
                 if (condensedInv.containsKey(stack1.getItem())) {
                     int count = condensedInv.get(stack1.getItem());
                     condensedInv.put(stack1.getItem(), count + stack1.getCount());
@@ -205,8 +206,8 @@ public abstract class NBTLogic {
             }
         }
         if (hasDiscs) {
-            for (SoundEvent music:
-                 discs.keySet()) {
+            for (SoundEvent music :
+                    discs.keySet()) {
                 ++j;
                 if (i <= k) {
                     ++i;
@@ -245,8 +246,7 @@ public abstract class NBTLogic {
                         Formatting formatting = i % 2 == 0 ? Formatting.WHITE : Formatting.GRAY;
                         mutableText.append(name).append("]");
                         mutableText.formatted(formatting);
-                    }
-                    else if (item instanceof BlockItem && item.getRarity(item.getDefaultStack()).equals(Rarity.COMMON)) {
+                    } else if (item instanceof BlockItem && item.getRarity(item.getDefaultStack()).equals(Rarity.COMMON)) {
                         mutableText.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(ColorFinder.getColor(item.getDefaultStack()))));
                     }
                     MutableText count = (MutableText) Text.of(" x" + (condensedInv.get(item)));
@@ -259,5 +259,28 @@ public abstract class NBTLogic {
         if (j - i > 0) {
             tooltip.add(((MutableText) Text.of("LAlt to show " + (j - i) + " more...")).formatted(Formatting.ITALIC).formatted(Formatting.GRAY));
         }
+    }
+
+    public static boolean hasBees(ItemStack stack) {
+        if (stack.getItem() instanceof BlockItem bi) {
+            if (bi.getBlock() instanceof BeehiveBlock) {
+                if (stack.getNbt() != null) {
+                    try {
+                        return !((NbtList) Objects.requireNonNull(((NbtCompound) Objects.requireNonNull(stack.getNbt().get("BlockEntityTag"))).get("Bees"))).isEmpty();
+                    } catch (NullPointerException ignored) {
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean hasSkowner(ItemStack stack) {
+        if (stack.getItem() instanceof BlockItem bi && stack.getNbt() != null) {
+            if (bi.getBlock() instanceof SkullBlock) {
+                return (stack.getNbt().contains("SkullOwner", NbtElement.COMPOUND_TYPE));
+            }
+        }
+        return false;
     }
 }

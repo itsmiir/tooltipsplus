@@ -66,7 +66,7 @@ public abstract class ExtraTooltips {
             text.formatted(Formatting.GRAY);
             return text;
         } catch (Exception e) {
-            return Text.empty();
+            return null;
         }
     }
 
